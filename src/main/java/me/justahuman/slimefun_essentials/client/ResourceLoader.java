@@ -5,6 +5,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import com.google.gson.reflect.TypeToken;
 import lombok.NonNull;
 import me.justahuman.slimefun_essentials.SlimefunEssentials;
 import me.justahuman.slimefun_essentials.config.ModConfig;
@@ -20,9 +21,8 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -416,5 +416,70 @@ public class ResourceLoader {
         slimefunItems.putAll(sortedSlimefunItems);
         sortedSlimefunItems.clear();
         ids.clear();
+    }
+
+    /**
+     * Saves the placed blocks to a file
+     *
+     * @param address The address of the server, such as "example.com:25565"
+     */
+    public static void savePlacedBlocks(String address) {
+        File directory = new File(System.getProperty("user.dir") + "/slimefun_essentials/placed_blocks");
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+        address = address.replace(":", "_");
+        File file = new File(directory, address + ".json");
+
+        Map<String, String> serializableMap = new HashMap<>();
+        for (Map.Entry<BlockPos, String> entry : placedBlocks.entrySet()) {
+            // Convert BlockPos to a simple string representation
+            BlockPos pos = entry.getKey();
+            String posKey = pos.getX() + "," + pos.getY() + "," + pos.getZ();
+            serializableMap.put(posKey, entry.getValue());
+        }
+        try (FileWriter writer = new FileWriter(file)) {
+            gson.toJson(serializableMap, writer);
+        } catch (IOException e) {
+            Utils.error(e);
+        }
+    }
+
+    /**
+     * Loads the placed blocks from a file
+     *
+     * @param address The address of the server, such as "example.com:25565"
+     */
+    public static void loadPlacedBlocks(String address) {
+        File directory = new File(System.getProperty("user.dir") + "/slimefun_essentials/placed_blocks");
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+        String[] files = directory.list();
+        if (files == null) {
+            return;
+        }
+        String target = address.replace(":", "_") + ".json";
+        for(String file : files) {
+            if (file.equals(target)) {
+                try {
+                    FileReader reader = new FileReader(new File(directory, file));
+                    Type type = new TypeToken<Map<String, String>>() {}.getType();
+                    Map<String, String> loadedMap = gson.fromJson(reader, type);
+
+                    // Clear existing data
+                    placedBlocks.clear();
+
+                    for (Map.Entry<String, String> entry : loadedMap.entrySet()) {
+                        String[] posParts = entry.getKey().split(",");
+                        BlockPos pos = new BlockPos(Integer.parseInt(posParts[0]), Integer.parseInt(posParts[1]), Integer.parseInt(posParts[2]));
+                        placedBlocks.put(pos, entry.getValue());
+                    }
+                } catch (IOException e) {
+                    Utils.error(e);
+                }
+                break;
+            }
+        }
     }
 }

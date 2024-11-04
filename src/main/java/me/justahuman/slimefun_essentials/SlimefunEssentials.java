@@ -29,6 +29,7 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class SlimefunEssentials implements ClientModInitializer {
     @Override
@@ -84,8 +85,14 @@ public class SlimefunEssentials implements ClientModInitializer {
 
                 ResourceLoader.addPlacedBlock(payload.pos(), payload.id().toLowerCase());
             });
+            // on join, load placed blocks
+            ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> ResourceLoader.loadPlacedBlocks(Objects.requireNonNull(handler.getServerInfo()).address));
 
-            ClientPlayConnectionEvents.DISCONNECT.register((handler, minecraftClient) -> ResourceLoader.clearPlacedBlocks());
+            // on disconnect, save placed blocks and clear the map
+            ClientPlayConnectionEvents.DISCONNECT.register((handler, minecraftClient) -> {
+                ResourceLoader.savePlacedBlocks(Objects.requireNonNull(handler.getServerInfo()).address);
+                ResourceLoader.clearPlacedBlocks();
+            });
         }
 
         if (ModConfig.autoToggleAddons()) {
