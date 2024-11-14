@@ -40,7 +40,7 @@ public abstract class ContentsBuilderMixin {
         int i = 0;
         final Map<String, SlimefunRecipeCategory> recipeCategories = SlimefunRecipeCategory.getAllCategories();
         for (SlimefunItemGroup itemGroup : SlimefunItemGroup.getItemGroups().values()) {
-            final Identifier identifier = Utils.newIdentifier(itemGroup.identifier().toString().replace(":", "_"));
+            final Identifier identifier = Utils.id(itemGroup.identifier().toString().replace(":", "_"));
             final BookCategory category = new BookCategory(PatchouliIntegration.getItemGroupCategory(itemGroup, i), identifier, this.book);
             this.categories.put(identifier, category);
 
@@ -48,7 +48,7 @@ public abstract class ContentsBuilderMixin {
             for (String content : itemGroup.content()) {
                 final SlimefunRecipeCategory recipeCategory = recipeCategories.get(content);
                 if (recipeCategory != null) {
-                    final Identifier recipe = Utils.newIdentifier(content);
+                    final Identifier recipe = Utils.id(content);
                     final BookEntry recipeEntry = new BookEntry(PatchouliIntegration.getRecipeEntry(category, recipeCategory, c), recipe, book, null);
                     recipeEntry.initCategory(recipe, ignored -> category);
                     this.entries.put(recipe, recipeEntry);

@@ -2,6 +2,7 @@ package me.justahuman.slimefun_essentials.compat.emi;
 
 import dev.emi.emi.api.stack.EmiIngredient;
 import dev.emi.emi.api.stack.EmiStack;
+import me.justahuman.slimefun_essentials.SlimefunEssentials;
 import me.justahuman.slimefun_essentials.api.IdInterpreter;
 import me.justahuman.slimefun_essentials.client.SlimefunRecipe;
 import me.justahuman.slimefun_essentials.client.SlimefunRecipeComponent;
@@ -34,7 +35,7 @@ public class EmiIdInterpreter implements IdInterpreter<EmiIngredient> {
             return emiStack;
         }
 
-        Utils.warn("Invalid EmiStack Component: " + component);
+        SlimefunEssentials.LOGGER.error("Failed to interpret EmiStack from component: {}", component);
         return EmiStack.EMPTY;
     }
 

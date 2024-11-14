@@ -5,19 +5,24 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import com.mojang.serialization.DynamicOps;
-import net.minecraft.client.MinecraftClient;
+import me.justahuman.slimefun_essentials.SlimefunEssentials;
 import net.minecraft.component.ComponentChanges;
 import net.minecraft.component.ComponentMapImpl;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.StringNbtReader;
+import net.minecraft.registry.BuiltinRegistries;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryOps;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 
 public class JsonUtils {
-    private static final Gson gson = new Gson().newBuilder().setPrettyPrinting().create();
+    private static final RegistryWrapper.WrapperLookup LOOKUP = BuiltinRegistries.createWrapperLookup();
+    private static final RegistryOps<NbtElement> NBT_OPS = LOOKUP.getOps(NbtOps.INSTANCE);
+    private static final Gson GSON = new Gson().newBuilder().setPrettyPrinting().create();
 
     public static JsonObject getObject(JsonObject parent, String key, JsonObject def) {
         return parent.get(key) instanceof JsonObject json ? json : def;
@@ -74,13 +79,13 @@ public class JsonUtils {
         json.addProperty("item", Registries.ITEM.getId(itemStack.getItem()).toString());
         json.addProperty("amount", itemStack.getCount());
         if (changes != ComponentChanges.EMPTY) {
-            json.addProperty("components", ComponentChanges.CODEC.encodeStart(withRegistryAccess(NbtOps.INSTANCE), changes).getOrThrow().asString());
+            json.addProperty("components", ComponentChanges.CODEC.encodeStart(NBT_OPS, changes).getOrThrow().asString());
         }
         return json.toString();
     }
 
     public static ItemStack deserializeItem(String string) {
-        return deserializeItem(gson.fromJson(string, JsonObject.class));
+        return deserializeItem(GSON.fromJson(string, JsonObject.class));
     }
     
     public static ItemStack deserializeItem(JsonObject json) {
@@ -88,27 +93,17 @@ public class JsonUtils {
             return ItemStack.EMPTY;
         }
 
-        final ItemStack itemStack = new ItemStack(Registries.ITEM.get(new Identifier(json.get("item").getAsString())));
+        final ItemStack itemStack = new ItemStack(Registries.ITEM.get(Identifier.tryParse(json.get("item").getAsString())));
         itemStack.setCount(JsonHelper.getInt(json, "amount", 1));
 
         try {
-            if (itemStack.getComponents() instanceof ComponentMapImpl components && JsonHelper.hasString(json, "components")) {
-                String componentsString = JsonHelper.getString(json, "components");
-                components.setChanges(ComponentChanges.CODEC.decode(withRegistryAccess(NbtOps.INSTANCE),
-                        StringNbtReader.parse(componentsString)).getOrThrow().getFirst());
+            if (itemStack.getComponents() instanceof ComponentMapImpl components && json.get("components") instanceof JsonPrimitive primitive && primitive.isString()) {
+                components.setChanges(ComponentChanges.CODEC.decode(NBT_OPS, StringNbtReader.parse(primitive.getAsString())).getOrThrow().getFirst());
             }
         } catch (Exception e) {
-            Utils.error(e);
+            SlimefunEssentials.LOGGER.error("Failed to deserialize item components", e);
         }
         
         return itemStack;
-    }
-
-    private static <T> DynamicOps<T> withRegistryAccess(DynamicOps<T> ops) {
-        MinecraftClient instance = MinecraftClient.getInstance();
-        if (instance == null || instance.world == null) {
-            return ops;
-        }
-        return instance.world.getRegistryManager().getOps(ops);
     }
 }

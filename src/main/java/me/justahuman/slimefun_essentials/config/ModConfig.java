@@ -8,6 +8,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 import lombok.Getter;
 import lombok.Setter;
+import me.justahuman.slimefun_essentials.SlimefunEssentials;
 import me.justahuman.slimefun_essentials.utils.JsonUtils;
 import me.justahuman.slimefun_essentials.utils.Utils;
 import net.fabricmc.loader.api.FabricLoader;
@@ -51,8 +52,7 @@ public class ModConfig {
                 jsonObject.entrySet().forEach(entry -> root.add(entry.getKey(), entry.getValue()));
             }
         } catch (Exception e) {
-            Utils.warn("Error occurred while loading Config!");
-            Utils.warn(e.getMessage());
+            SlimefunEssentials.LOGGER.error("Error occurred while reading Config!", e);
         }
 
         loadConfigOption(() -> blockFeatures = JsonUtils.getBool(root, "block_features", true, true));
@@ -87,8 +87,7 @@ public class ModConfig {
         try {
             runnable.run();
         } catch (Exception e) {
-            Utils.warn("Error occurred while loading Config!");
-            Utils.warn(e.getMessage());
+            SlimefunEssentials.LOGGER.error("Error occurred while loading Config!", e);
         }
     }
     
@@ -125,8 +124,7 @@ public class ModConfig {
             gson.toJson(root, fileWriter);
             fileWriter.flush();
         } catch (IOException e) {
-            Utils.warn("Error occurred while saving Config!");
-            Utils.warn(e.getMessage());
+            SlimefunEssentials.LOGGER.error("Error occurred while saving Config!", e);
         }
     }
     
@@ -189,8 +187,7 @@ public class ModConfig {
                     throw new IOException();
                 }
             } catch(IOException | SecurityException e) {
-                Utils.warn("Failed to create config file!");
-                Utils.warn(e.getMessage());
+                SlimefunEssentials.LOGGER.error("Error occurred creating Config file!", e);
             }
         }
         return configFile;

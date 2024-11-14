@@ -21,8 +21,6 @@ import me.justahuman.slimefun_essentials.utils.Utils;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.util.Identifier;
 
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +43,7 @@ public class EmiIntegration implements EmiPlugin {
 
         for (SlimefunRecipeCategory slimefunRecipeCategory : SlimefunRecipeCategory.getRecipeCategories().values()) {
             final String workstationId = slimefunRecipeCategory.id();
-            final Identifier categoryIdentifier = Utils.newIdentifier(workstationId);
+            final Identifier categoryIdentifier = Utils.id(workstationId);
             final EmiStack workStation = EmiStack.of(slimefunRecipeCategory.itemStack());
             final SlimefunEmiCategory slimefunEmiCategory;
             if (slimefunCategories.containsKey(workstationId)) {

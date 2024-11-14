@@ -8454,7 +8454,7 @@
       {
         "inputs": [
           "~water:1",
-          "empty_bucket:1"
+          "bucket:1"
         ],
         "outputs": "water_bucket:1"
       },
@@ -8468,7 +8468,7 @@
       {
         "inputs": [
           "~lava:1",
-          "empty_bucket:1"
+          "bucket:1"
         ],
         "outputs": "lava_bucket:1"
       }

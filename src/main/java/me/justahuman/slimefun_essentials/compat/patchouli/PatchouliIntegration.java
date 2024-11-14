@@ -20,15 +20,15 @@ import vazkii.patchouli.client.book.BookCategory;
 import vazkii.patchouli.client.book.ClientBookRegistry;
 
 public class PatchouliIntegration {
-    public static final Identifier BOOK_IDENTIFIER = Utils.newIdentifier("slimefun");
+    public static final Identifier BOOK_IDENTIFIER = Utils.id("slimefun");
     public static final PatchouliIdInterpreter INTERPRETER = new PatchouliIdInterpreter();
 
     public static void init() {
-        ClientBookRegistry.INSTANCE.pageTypes.put(Utils.newIdentifier("ancient_altar"), AncientAltarPage.class);
-        ClientBookRegistry.INSTANCE.pageTypes.put(Utils.newIdentifier("grid"), GridPage.class);
-        ClientBookRegistry.INSTANCE.pageTypes.put(Utils.newIdentifier("process"), ProcessPage.class);
-        ClientBookRegistry.INSTANCE.pageTypes.put(Utils.newIdentifier("reactor"), ReactorPage.class);
-        ClientBookRegistry.INSTANCE.pageTypes.put(Utils.newIdentifier("smeltery"), SmelteryPage.class);
+        ClientBookRegistry.INSTANCE.pageTypes.put(Utils.id("ancient_altar"), AncientAltarPage.class);
+        ClientBookRegistry.INSTANCE.pageTypes.put(Utils.id("grid"), GridPage.class);
+        ClientBookRegistry.INSTANCE.pageTypes.put(Utils.id("process"), ProcessPage.class);
+        ClientBookRegistry.INSTANCE.pageTypes.put(Utils.id("reactor"), ReactorPage.class);
+        ClientBookRegistry.INSTANCE.pageTypes.put(Utils.id("smeltery"), SmelteryPage.class);
     }
 
     public static JsonObject getItemGroupCategory(SlimefunItemGroup itemGroup, int sortnum) {

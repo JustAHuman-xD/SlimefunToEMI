@@ -105,7 +105,7 @@ public class ResourceLoader {
             final InputStream inputStream = resource.getInputStream();
             return gson.fromJson(new InputStreamReader(inputStream, StandardCharsets.UTF_8), JsonObject.class);
         } catch(IOException e) {
-            Utils.error(e);
+            SlimefunEssentials.LOGGER.error("Failed to load resource", e);
             return new JsonObject();
         }
     }
@@ -281,7 +281,7 @@ public class ResourceLoader {
      * @param id The {@link String} id that represents a Slimefun Item
      */
     public static void addBlockModel(String id) {
-        blockModels.put(id, new Identifier("minecraft", "block/" + id));
+        blockModels.put(id, Identifier.of("minecraft", "block/" + id));
     }
 
     /**

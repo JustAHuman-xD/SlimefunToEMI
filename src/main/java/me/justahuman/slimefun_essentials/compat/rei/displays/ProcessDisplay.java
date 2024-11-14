@@ -40,7 +40,7 @@ public class ProcessDisplay extends SlimefunDisplay {
     
     @Override
     public CategoryIdentifier<?> getCategoryIdentifier() {
-        return CategoryIdentifier.of(Utils.newIdentifier(this.slimefunRecipeCategory.id().toLowerCase()));
+        return CategoryIdentifier.of(Utils.id(this.slimefunRecipeCategory.id().toLowerCase()));
     }
 
     @Override

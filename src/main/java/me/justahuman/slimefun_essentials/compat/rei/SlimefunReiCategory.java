@@ -41,7 +41,7 @@ public class SlimefunReiCategory<T extends SlimefunDisplay> extends SimpleRecipe
     @Override
     @NotNull
     public CategoryIdentifier<T> getCategoryIdentifier() {
-        return CategoryIdentifier.of(Utils.newIdentifier(this.slimefunRecipeCategory.id().toLowerCase()));
+        return CategoryIdentifier.of(Utils.id(this.slimefunRecipeCategory.id().toLowerCase()));
     }
 
     @NotNull

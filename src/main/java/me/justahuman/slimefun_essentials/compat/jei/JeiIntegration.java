@@ -1,5 +1,6 @@
 package me.justahuman.slimefun_essentials.compat.jei;
 
+import me.justahuman.slimefun_essentials.SlimefunEssentials;
 import me.justahuman.slimefun_essentials.client.ResourceLoader;
 import me.justahuman.slimefun_essentials.client.SlimefunItemGroup;
 import me.justahuman.slimefun_essentials.client.SlimefunItemStack;
@@ -44,7 +45,7 @@ public class JeiIntegration implements IModPlugin {
     @Override
     @NotNull
     public Identifier getPluginUid() {
-        return Utils.newIdentifier("jei_integration");
+        return Utils.id("jei_integration");
     }
 
     @Override
@@ -91,7 +92,7 @@ public class JeiIntegration implements IModPlugin {
         }
 
         for (SlimefunRecipeCategory recipeCategory : SlimefunRecipeCategory.getRecipeCategories().values()) {
-            registration.addRecipes(RecipeType.create(Utils.ID, recipeCategory.id().toLowerCase(), SlimefunRecipe.class), recipeCategory.childRecipes());
+            registration.addRecipes(RecipeType.create(SlimefunEssentials.MOD_ID, recipeCategory.id().toLowerCase(), SlimefunRecipe.class), recipeCategory.childRecipes());
         }
     }
 
@@ -102,7 +103,7 @@ public class JeiIntegration implements IModPlugin {
         }
 
         for (SlimefunRecipeCategory recipeCategory : SlimefunRecipeCategory.getRecipeCategories().values()) {
-            registration.addRecipeCatalyst(recipeCategory.itemStack(), RecipeType.create(Utils.ID, recipeCategory.id().toLowerCase(), SlimefunRecipe.class));
+            registration.addRecipeCatalyst(recipeCategory.itemStack(), RecipeType.create(SlimefunEssentials.MOD_ID, recipeCategory.id().toLowerCase(), SlimefunRecipe.class));
         }
     }
 
@@ -113,7 +114,7 @@ public class JeiIntegration implements IModPlugin {
                 return;
             }
 
-            final RecipeType<SlimefunRecipe> recipeType = RecipeType.create(Utils.ID, recipeCategory.id().toLowerCase(), SlimefunRecipe.class);
+            final RecipeType<SlimefunRecipe> recipeType = RecipeType.create(SlimefunEssentials.MOD_ID, recipeCategory.id().toLowerCase(), SlimefunRecipe.class);
             if (recipeCategory.type().contains("grid")) {
                 registration.addRecipeTransferHandler(Generic3x3ContainerScreenHandler.class, ScreenHandlerType.GENERIC_3X3, recipeType, 0, 9, 9, 36);
             }

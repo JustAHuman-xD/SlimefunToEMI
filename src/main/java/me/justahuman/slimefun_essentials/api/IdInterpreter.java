@@ -1,8 +1,8 @@
 package me.justahuman.slimefun_essentials.api;
 
+import me.justahuman.slimefun_essentials.SlimefunEssentials;
 import me.justahuman.slimefun_essentials.client.ResourceLoader;
 import me.justahuman.slimefun_essentials.client.SlimefunRecipeComponent;
-import me.justahuman.slimefun_essentials.utils.Utils;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
@@ -19,7 +19,7 @@ public interface IdInterpreter<T> {
         }
         
         if (!id.contains(":")) {
-            Utils.warn("Invalid Ingredient Id:" + id);
+            SlimefunEssentials.LOGGER.error("Invalid Ingredient Id: {}", id);
             return def;
         }
 
@@ -65,25 +65,29 @@ public interface IdInterpreter<T> {
         // Entity
         else if (type.startsWith("@")) {
             final boolean baby = type.startsWith("baby_", 1);
-            final Identifier identifier = new Identifier("minecraft:" + type.substring(baby ? 6 : 1));
-            if (! Registries.ENTITY_TYPE.containsId(identifier)) {
-                Utils.warn("Invalid Ingredient Entity Id: " + id);
+            final Identifier identifier = Identifier.tryParse("minecraft:" + type.substring(baby ? 6 : 1));
+            if (identifier == null || !Registries.ENTITY_TYPE.containsId(identifier)) {
+                SlimefunEssentials.LOGGER.error("Invalid Ingredient Entity Id: {}", id);
                 return def;
             }
             return fromEntityType(chance, Registries.ENTITY_TYPE.get(identifier), baby, amount, def);
         }
         // Fluid
         else if (type.startsWith("~")) {
-            final Identifier identifier = new Identifier("minecraft:" + type.substring(1));
-            if (!Registries.FLUID.containsId(identifier)) {
-                Utils.warn("Invalid Ingredient Fluid Id: " + id);
+            final Identifier identifier = Identifier.tryParse("minecraft:" + type.substring(1));
+            if (identifier == null || !Registries.FLUID.containsId(identifier)) {
+                SlimefunEssentials.LOGGER.error("Invalid Ingredient Fluid Id: {}", id);
                 return def;
             }
             return fromFluid(chance, FluidVariant.of(Registries.FLUID.get(identifier)), amount, def);
         }
         // Tag
         else if (type.startsWith("#")) {
-            final Identifier identifier = new Identifier("minecraft:" + type.substring(1));
+            final Identifier identifier = Identifier.tryParse("minecraft:" + type.substring(1));
+            if (identifier == null) {
+                SlimefunEssentials.LOGGER.error("Invalid Ingredient Tag Id: {}", id);
+                return def;
+            }
             return fromTag(chance, TagKey.of(Registries.ITEM.getKey(), identifier), amount, def);
         }
         // Experience
@@ -92,9 +96,9 @@ public interface IdInterpreter<T> {
         }
         // Item (Or Mistake)
         else {
-            final Identifier identifier = new Identifier("minecraft:" + type.toLowerCase());
-            if (!Registries.ITEM.containsId(identifier)) {
-                Utils.warn("Invalid Ingredient ItemStack Id: " + id);
+            final Identifier identifier = Identifier.tryParse("minecraft:" + type.toLowerCase());
+            if (identifier == null || !Registries.ITEM.containsId(identifier)) {
+                SlimefunEssentials.LOGGER.error("Invalid Ingredient Item Id: {}", id);
                 return def;
             }
 

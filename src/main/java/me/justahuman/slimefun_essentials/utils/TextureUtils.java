@@ -17,9 +17,9 @@ public class TextureUtils {
     public static final int PAGE_HEIGHT = 156;
     public static final int PADDING = 4;
     public static final int REI_PADDING = 6;
-    public static final Identifier WIDGETS = new Identifier(Utils.ID, "textures/gui/widgets.png");
-    public static final Identifier WIDGETS_DARK = new Identifier(Utils.ID, "textures/gui/widgets_dark.png");
-    public static final Identifier WIDGETS_BOOK = new Identifier(Utils.ID, "textures/gui/widgets_book.png");
+    public static final Identifier WIDGETS = Utils.id("textures/gui/widgets.png");
+    public static final Identifier WIDGETS_DARK = Utils.id("textures/gui/widgets_dark.png");
+    public static final Identifier WIDGETS_BOOK = Utils.id("textures/gui/widgets_book.png");
     public static final SlimefunLabel ENERGY = SlimefunLabel.of("energy", 36, 0, 7, 9);
     public static final SlimefunLabel ENERGY_POSITIVE = SlimefunLabel.of("energy_positive", 43, 0, 7, 9);
     public static final SlimefunLabel ENERGY_NEGATIVE = SlimefunLabel.of("energy_negative", 50, 0, 7, 9);

@@ -13,12 +13,13 @@ import net.minecraft.util.Identifier;
 import java.util.function.Function;
 
 public class Payloads {
+    public static final String PLUGIN_ID = "slimefun_server_essentials";
     public static final CustomPayload.Id<SlimefunAddonPayload> ADDON_CHANNEL = newChannel("addon");
     public static final CustomPayload.Id<SlimefunBlockPayload> BLOCK_CHANNEL = newChannel("block");
     public static final CustomPayload.Id<DisabledItemPayload> ITEM_CHANNEL = newChannel("item");
 
     public static <P extends CustomPayload> CustomPayload.Id<P> newChannel(String channel) {
-        return new CustomPayload.Id<>(new Identifier("slimefun_server_essentials", channel));
+        return new CustomPayload.Id<>(Identifier.of(PLUGIN_ID, channel));
     }
 
     public static <P extends CustomPayload>PacketCodec<PacketByteBuf, P> newCodec(Function<ByteArrayDataInput, P> decoder) {

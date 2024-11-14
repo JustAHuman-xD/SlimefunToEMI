@@ -1,5 +1,6 @@
 package me.justahuman.slimefun_essentials.utils;
 
+import me.justahuman.slimefun_essentials.SlimefunEssentials;
 import me.justahuman.slimefun_essentials.client.ResourceLoader;
 import me.justahuman.slimefun_essentials.config.ModConfig;
 import net.minecraft.client.MinecraftClient;
@@ -11,21 +12,16 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 
 public class Utils {
-    public static final String ID = "slimefun_essentials";
     public static final Set<String> HIDDEN_SF_IDS = Set.of("_UI_BACKGROUND", "_UI_INPUT_SLOT", "_UI_OUTPUT_SLOT");
-    private static final Logger LOGGER = LoggerFactory.getLogger(ID);
-    private static final String ERROR_MESSAGE = "[SFE] Failed to load data";
 
-    public static Identifier newIdentifier(String path) {
-        return new Identifier(ID, path.toLowerCase(Locale.ROOT));
+    public static Identifier id(String path) {
+        return Identifier.of(SlimefunEssentials.MOD_ID, path.toLowerCase(Locale.ROOT));
     }
 
     public static boolean filterResources(Identifier identifier) {
@@ -128,18 +124,5 @@ public class Utils {
 
         final ServerInfo server = client.getCurrentServerEntry();
         return server != null && !server.isLocal() && !server.isRealm();
-    }
-
-    public static void log(String message) {
-        LOGGER.info(message);
-    }
-
-    public static void warn(String warning) {
-        LOGGER.warn(warning);
-    }
-
-    public static void error(Exception exception) {
-        LOGGER.error(ERROR_MESSAGE);
-        exception.printStackTrace();
     }
 }

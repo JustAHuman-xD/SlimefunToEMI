@@ -3,6 +3,7 @@ package me.justahuman.slimefun_essentials.compat.jei.categories;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import me.justahuman.slimefun_essentials.SlimefunEssentials;
 import me.justahuman.slimefun_essentials.api.OffsetBuilder;
 import me.justahuman.slimefun_essentials.api.SimpleRecipeRenderer;
 import me.justahuman.slimefun_essentials.client.SlimefunRecipeCategory;
@@ -12,7 +13,6 @@ import me.justahuman.slimefun_essentials.client.SlimefunRecipeComponent;
 import me.justahuman.slimefun_essentials.compat.jei.JeiIntegration;
 import me.justahuman.slimefun_essentials.api.ManualRecipeRenderer;
 import me.justahuman.slimefun_essentials.utils.TextureUtils;
-import me.justahuman.slimefun_essentials.utils.Utils;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
@@ -84,7 +84,7 @@ public class ProcessCategory extends SimpleRecipeRenderer implements IRecipeCate
     @Override
     @NotNull
     public RecipeType<SlimefunRecipe> getRecipeType() {
-        return RecipeType.create(Utils.ID, this.slimefunRecipeCategory.id().toLowerCase(), SlimefunRecipe.class);
+        return RecipeType.create(SlimefunEssentials.MOD_ID, this.slimefunRecipeCategory.id().toLowerCase(), SlimefunRecipe.class);
     }
     
     @Override

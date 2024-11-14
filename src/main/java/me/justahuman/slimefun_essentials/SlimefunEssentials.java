@@ -26,11 +26,16 @@ import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.ChunkPos;
 import org.lwjgl.glfw.GLFW;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SlimefunEssentials implements ClientModInitializer {
+    public static final String MOD_ID = "slimefun_essentials";
+    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+
     @Override
     public void onInitializeClient() {
         PayloadTypeRegistry.playS2C().register(Payloads.ADDON_CHANNEL, SlimefunAddonPayload.CODEC);
@@ -54,7 +59,7 @@ public class SlimefunEssentials implements ClientModInitializer {
         ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new SimpleSynchronousResourceReloadListener() {
             @Override
             public Identifier getFabricId() {
-                return Utils.newIdentifier("reload_listener");
+                return Utils.id("reload_listener");
             }
     
             @Override
