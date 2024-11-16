@@ -64,7 +64,6 @@ dependencies {
     }
     modCompileOnly("me.shedaniel:RoughlyEnoughItems-api-fabric:${rei_version}")
     modCompileOnly("me.shedaniel:RoughlyEnoughItems-default-plugin-fabric:${rei_version}")
-    modCompileOnly("dev.architectury:architectury-fabric:${architectury_version}")
     modCompileOnly("me.shedaniel.cloth:basic-math:${cloth_math_version}")
 
     modApi "com.terraformersmc:modmenu:${project.mod_menu_version}"

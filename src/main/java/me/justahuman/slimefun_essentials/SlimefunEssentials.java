@@ -19,6 +19,7 @@ import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.resource.ResourceManager;
@@ -64,6 +65,9 @@ public class SlimefunEssentials implements ClientModInitializer {
     
             @Override
             public void reload(ResourceManager manager) {
+                if (MinecraftClient.getInstance().world == null) {
+                    return;
+                }
                 ResourceLoader.clear();
                 ResourceLoader.loadResources(manager);
             }

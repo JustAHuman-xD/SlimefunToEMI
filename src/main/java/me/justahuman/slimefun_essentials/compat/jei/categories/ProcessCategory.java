@@ -15,6 +15,7 @@ import me.justahuman.slimefun_essentials.api.ManualRecipeRenderer;
 import me.justahuman.slimefun_essentials.utils.TextureUtils;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
+import mezz.jei.api.gui.builder.ITooltipBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.drawable.IDrawableAnimated;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
@@ -156,17 +157,15 @@ public class ProcessCategory extends SimpleRecipeRenderer implements IRecipeCate
         }
     }
 
-    @NotNull
     @Override
-    public List<Text> getTooltipStrings(SlimefunRecipe recipe, IRecipeSlotsView recipeSlotsView, double mouseX, double mouseY) {
-        final List<Text> tooltips = new ArrayList<>();
+    public void getTooltip(ITooltipBuilder tooltip, SlimefunRecipe recipe, IRecipeSlotsView recipeSlotsView, double mouseX, double mouseY) {
         final OffsetBuilder offsets = new OffsetBuilder(this, recipe, calculateXOffset(this.slimefunRecipeCategory, recipe));
 
         // Label Tooltips
         if (recipe.hasLabels()) {
             for (SlimefunLabel slimefunLabel : recipe.labels()) {
                 if (tooltipActive(mouseX, mouseY, offsets.getX(), offsets.label(), slimefunLabel)) {
-                    tooltips.add(labelTooltip(slimefunLabel));
+                    tooltip.add(labelTooltip(slimefunLabel));
                 }
                 offsets.x().addLabel();
             }
@@ -175,7 +174,7 @@ public class ProcessCategory extends SimpleRecipeRenderer implements IRecipeCate
         // Energy Tooltip Option 1
         if (recipe.hasEnergy() && recipe.hasOutputs()) {
             if (tooltipActive(mouseX, mouseY, offsets.getX(), offsets.energy(), TextureUtils.ENERGY)) {
-                tooltips.add(energyTooltip(recipe));
+                tooltip.add(energyTooltip(recipe));
             }
             offsets.x().addEnergy();
         }
@@ -185,17 +184,15 @@ public class ProcessCategory extends SimpleRecipeRenderer implements IRecipeCate
         if (recipe.hasEnergy() || recipe.hasOutputs()) {
             // Arrow Tooltip
             if (recipe.hasTime() && tooltipActive(mouseX, mouseY, offsets.getX(), offsets.arrow(), TextureUtils.ARROW)) {
-                tooltips.add(timeTooltip(recipe));
+                tooltip.add(timeTooltip(recipe));
             }
             offsets.x().addArrow();
 
             // Energy Tooltip Option 2
             if (!recipe.hasOutputs() && tooltipActive(mouseX, mouseY, offsets.getX(), offsets.energy(), TextureUtils.ENERGY)) {
-                tooltips.add(energyTooltip(recipe));
+                tooltip.add(energyTooltip(recipe));
             }
         }
-
-        return tooltips;
     }
 
     public void drawEnergyFill(DrawContext graphics, int x, int y, boolean negative) {

@@ -4,6 +4,7 @@
   "package": "me.justahuman.slimefun_essentials.mixins",
   "compatibilityLevel": "JAVA_17",
   "client": [
+    "jei.InterpretersAccessor",
     "minecraft.AddServerScreenMixin",
     "minecraft.ItemStackMixin",
     "minecraft.OrbAccessor",

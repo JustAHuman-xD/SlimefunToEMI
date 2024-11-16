@@ -113,6 +113,7 @@ public class Utils {
             return false;
         }
 
+        ResourceLoader.ensureLoaded();
         return true;
     }
 

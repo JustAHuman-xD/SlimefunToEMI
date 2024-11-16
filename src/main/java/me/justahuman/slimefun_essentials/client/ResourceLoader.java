@@ -12,6 +12,7 @@ import me.justahuman.slimefun_essentials.utils.CompatUtils;
 import me.justahuman.slimefun_essentials.utils.JsonUtils;
 import me.justahuman.slimefun_essentials.utils.Utils;
 import net.minecraft.block.Block;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemStack;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
@@ -40,11 +41,10 @@ public class ResourceLoader {
     private static final Map<String, SlimefunItemStack> slimefunItems = new LinkedHashMap<>();
     private static final Set<String> vanillaItems = new HashSet<>();
     private static final Set<String> itemBlacklist = new HashSet<>();
-
     private static final Map<String, Identifier> blockModels = new HashMap<>();
-
     private static final Map<ChunkPos, Set<BlockPos>> placedChunks = new HashMap<>();
     private static final Map<BlockPos, String> placedBlocks = new HashMap<>();
+    private static boolean loaded = false;
 
     /**
      * Clears {@link ResourceLoader#slimefunItems}, {@link ResourceLoader#itemBlacklist}, {@link ResourceLoader#blockModels}, {@link SlimefunLabel#clear()}, {@link SlimefunRecipeCategory#clear()}, {@link SlimefunItemGroup#clear()}
@@ -56,6 +56,7 @@ public class ResourceLoader {
         SlimefunLabel.clear();
         SlimefunRecipeCategory.clear();
         SlimefunItemGroup.clear();
+        loaded = false;
     }
 
     /**
@@ -64,6 +65,12 @@ public class ResourceLoader {
     public static void clearPlacedBlocks() {
         placedBlocks.clear();
         placedChunks.clear();
+    }
+
+    public static void ensureLoaded() {
+        if (!loaded) {
+            loadResources(MinecraftClient.getInstance().getResourceManager());
+        }
     }
 
     /**
@@ -91,6 +98,7 @@ public class ResourceLoader {
                 loadItems(manager);
             }
         }
+        loaded = true;
     }
 
     /**
@@ -358,6 +366,10 @@ public class ResourceLoader {
 
     public static String getPlacedId(BlockPos blockPos) {
         return placedBlocks.get(blockPos);
+    }
+
+    public static boolean isLoaded() {
+        return loaded;
     }
 
     /**
