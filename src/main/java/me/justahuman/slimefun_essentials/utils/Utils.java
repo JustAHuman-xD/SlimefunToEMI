@@ -1,10 +1,7 @@
 package me.justahuman.slimefun_essentials.utils;
 
 import me.justahuman.slimefun_essentials.SlimefunEssentials;
-import me.justahuman.slimefun_essentials.client.ResourceLoader;
-import me.justahuman.slimefun_essentials.config.ModConfig;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ServerInfo;
+import me.justahuman.slimefun_essentials.client.SlimefunRegistry;
 import net.minecraft.component.ComponentChanges;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.NbtComponent;
@@ -28,32 +25,6 @@ public class Utils {
         return identifier.getPath().endsWith(".json");
     }
 
-    public static boolean filterAddons(Identifier identifier) {
-        if (!filterResources(identifier)) {
-            return false;
-        }
-
-        final String path = identifier.getPath();
-        final String addon = getFileName(path);
-        for (String enabledAddon : ModConfig.getAddons()) {
-            if (enabledAddon.equalsIgnoreCase(addon)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public static boolean filterItems(Identifier identifier) {
-        if (!filterResources(identifier)) {
-            return false;
-        }
-
-        final String path = identifier.getPath();
-        final String id = getFileName(path);
-        return ResourceLoader.getSlimefunItems().containsKey(id.toUpperCase(Locale.ROOT));
-    }
-
     public static boolean filterVanillaItems(Identifier identifier) {
         if (!filterResources(identifier)) {
             return false;
@@ -61,7 +32,7 @@ public class Utils {
 
         final String path = identifier.getPath();
         final String item = getFileName(path);
-        return ResourceLoader.getVanillaItems().contains(item);
+        return SlimefunRegistry.getVanillaItems().contains(item);
     }
 
     public static String getFileName(String path) {
@@ -102,28 +73,5 @@ public class Utils {
             return null;
         }
         return pluginNbt.getString("slimefun:slimefun_guide_mode");
-    }
-
-    public static boolean shouldFunction() {
-        if (ModConfig.requireServerConnection() && !Utils.isOnMultiplayer()) {
-            return false;
-        }
-
-        if (ModConfig.enableServerWhitelist() && !ModConfig.isCurrentServerEnabled()) {
-            return false;
-        }
-
-        ResourceLoader.ensureLoaded();
-        return true;
-    }
-
-    public static boolean isOnMultiplayer() {
-        final MinecraftClient client = MinecraftClient.getInstance();
-        if (client == null) {
-            return false;
-        }
-
-        final ServerInfo server = client.getCurrentServerEntry();
-        return server != null && !server.isLocal() && !server.isRealm();
     }
 }

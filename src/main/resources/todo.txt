@@ -1,3 +1,1 @@
-Add Support For (Core):
-- Auto Brewer
-- Tree Growth Accelerator
+- fill this out lol

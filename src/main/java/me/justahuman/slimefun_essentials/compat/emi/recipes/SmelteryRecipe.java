@@ -19,7 +19,7 @@ public class SmelteryRecipe extends ProcessRecipe {
     @Override
     public void addWidgets(WidgetHolder widgets) {
         final OffsetBuilder offsets = new OffsetBuilder(this, this.slimefunRecipe, TextureUtils.PADDING, TextureUtils.PADDING);
-        
+
         // Display Energy
         addEnergyWithCheck(widgets, offsets);
     

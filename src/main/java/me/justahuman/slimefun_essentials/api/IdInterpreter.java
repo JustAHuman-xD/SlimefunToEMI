@@ -1,7 +1,7 @@
 package me.justahuman.slimefun_essentials.api;
 
 import me.justahuman.slimefun_essentials.SlimefunEssentials;
-import me.justahuman.slimefun_essentials.client.ResourceLoader;
+import me.justahuman.slimefun_essentials.client.SlimefunRegistry;
 import me.justahuman.slimefun_essentials.client.SlimefunRecipeComponent;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.minecraft.entity.EntityType;
@@ -17,7 +17,7 @@ public interface IdInterpreter<T> {
         if (id.isEmpty() || id.isBlank()) {
             return def;
         }
-        
+
         if (!id.contains(":")) {
             SlimefunEssentials.LOGGER.error("Invalid Ingredient Id: {}", id);
             return def;
@@ -38,7 +38,7 @@ public interface IdInterpreter<T> {
                 id = id.substring(0, id.indexOf('%'));
             } catch (Exception ignored) {}
         }
-        
+
         final String type = id.substring(0, id.indexOf(':'));
         final String count = id.substring(id.indexOf(':') + 1);
         int amount = 1;
@@ -47,8 +47,8 @@ public interface IdInterpreter<T> {
         } catch (Exception ignored) {}
 
         // Slimefun Item
-        if (ResourceLoader.getSlimefunItems().containsKey(type)) {
-            final ItemStack itemStack = ResourceLoader.getSlimefunItems().get(type).copy().itemStack();
+        if (SlimefunRegistry.getSlimefunItems().containsKey(type)) {
+            final ItemStack itemStack = SlimefunRegistry.getSlimefunItems().get(type).copy().itemStack();
             if (damage > 0) {
                 itemStack.setDamage(damage);
             }

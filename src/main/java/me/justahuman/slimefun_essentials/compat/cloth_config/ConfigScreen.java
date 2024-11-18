@@ -16,7 +16,7 @@ public class ConfigScreen {
         final ConfigBuilder builder = ConfigBuilder.create()
                 .setParentScreen(parent)
                 .setTitle(Text.translatable("slimefun_essentials.title"));
-        
+
         final ConfigEntryBuilder entryBuilder = builder.entryBuilder();
         final ConfigCategory generalCategory = builder.getOrCreateCategory(Text.translatable("slimefun_essentials.config.category.general"));
         final ConfigCategory visualCategory = builder.getOrCreateCategory(Text.translatable("slimefun_essentials.config.category.visual"));
@@ -96,9 +96,9 @@ public class ConfigScreen {
                 .setTooltip(Text.translatable("slimefun_essentials.config.option.auto_manage_items.tooltip"))
                 .setSaveConsumer(ModConfig::setAutoManageItems)
                 .build());
-        
+
         builder.setSavingRunnable(ModConfig::saveConfig);
-        
+
         return builder.build();
     }
 }

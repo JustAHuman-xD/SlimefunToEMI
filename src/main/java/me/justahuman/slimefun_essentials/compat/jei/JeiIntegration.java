@@ -1,7 +1,7 @@
 package me.justahuman.slimefun_essentials.compat.jei;
 
 import me.justahuman.slimefun_essentials.SlimefunEssentials;
-import me.justahuman.slimefun_essentials.client.ResourceLoader;
+import me.justahuman.slimefun_essentials.client.SlimefunRegistry;
 import me.justahuman.slimefun_essentials.client.SlimefunItemGroup;
 import me.justahuman.slimefun_essentials.client.SlimefunItemStack;
 import me.justahuman.slimefun_essentials.client.SlimefunRecipe;
@@ -53,27 +53,26 @@ public class JeiIntegration implements IModPlugin {
 
     @Override
     public void registerRuntime(IRuntimeRegistration registration) {
-        if (!Utils.shouldFunction()) {
-            return;
-        }
+        
 
         for (ProcessCategory category : CATEGORIES) {
             category.updateIcon();
         }
 
         registration.getIngredientManager().addIngredientsAtRuntime(VanillaTypes.ITEM_STACK,
-                SlimefunItemGroup.sort(List.copyOf(ResourceLoader.getSlimefunItems().values())).stream().map(SlimefunItemStack::itemStack).toList());
+                SlimefunItemGroup.sort(List.copyOf(SlimefunRegistry.getSlimefunItems().values())).stream().map(SlimefunItemStack::itemStack).toList());
     }
 
     @Override
     public void registerItemSubtypes(ISubtypeRegistration iregistration) {
-        if (!Utils.shouldFunction() || !(iregistration instanceof SubtypeRegistration registration)) {
+
+        if (!(iregistration instanceof SubtypeRegistration registration)) {
             return;
         }
 
         SubtypeInterpreters interpreters = registration.getInterpreters();
         Set<Item> wrappedItems = new HashSet<>();
-        for (SlimefunItemStack slimefunItemStack : ResourceLoader.getSlimefunItems().values()) {
+        for (SlimefunItemStack slimefunItemStack : SlimefunRegistry.getSlimefunItems().values()) {
             ItemStack itemStack = slimefunItemStack.itemStack();
             Item item = itemStack.getItem();
             if (!wrappedItems.add(item)) {
@@ -88,9 +87,7 @@ public class JeiIntegration implements IModPlugin {
 
     @Override
     public void registerCategories(IRecipeCategoryRegistration registration) {
-        if (!Utils.shouldFunction()) {
-            return;
-        }
+        
 
         IJeiHelpers jeiHelpers = registration.getJeiHelpers();
         IGuiHelper guiHelper = jeiHelpers.getGuiHelper();
@@ -103,9 +100,7 @@ public class JeiIntegration implements IModPlugin {
 
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
-        if (!Utils.shouldFunction()) {
-            return;
-        }
+        
 
         for (SlimefunRecipeCategory recipeCategory : SlimefunRecipeCategory.getRecipeCategories().values()) {
             registration.addRecipes(RecipeType.create(SlimefunEssentials.MOD_ID, recipeCategory.id().toLowerCase(), SlimefunRecipe.class), recipeCategory.childRecipes());
@@ -114,9 +109,7 @@ public class JeiIntegration implements IModPlugin {
 
     @Override
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
-        if (!Utils.shouldFunction()) {
-            return;
-        }
+        
 
         for (SlimefunRecipeCategory recipeCategory : SlimefunRecipeCategory.getRecipeCategories().values()) {
             registration.addRecipeCatalyst(recipeCategory.itemStack(), RecipeType.create(SlimefunEssentials.MOD_ID, recipeCategory.id().toLowerCase(), SlimefunRecipe.class));
@@ -125,9 +118,7 @@ public class JeiIntegration implements IModPlugin {
 
     @Override
     public void registerRecipeTransferHandlers(IRecipeTransferRegistration registration) {
-        if (!Utils.shouldFunction()) {
-            return;
-        }
+        
 
         for (SlimefunRecipeCategory recipeCategory : SlimefunRecipeCategory.getRecipeCategories().values()) {
             if (recipeCategory.type().contains("ancient_altar")) {

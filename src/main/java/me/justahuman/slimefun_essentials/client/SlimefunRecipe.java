@@ -33,21 +33,21 @@ public class SlimefunRecipe {
         final List<SlimefunRecipeComponent> outputs = new ArrayList<>();
         final List<SlimefunLabel> labels = new ArrayList<>();
         final JsonArray complex = JsonUtils.getArray(recipeObject, "complex", new JsonArray());
-        
+
         for (JsonElement inputElement : JsonUtils.getArray(recipeObject, "inputs", new JsonArray())) {
             final SlimefunRecipeComponent inputRecipeElement = SlimefunRecipeComponent.deserialize(complex, inputElement);
             if (inputRecipeElement != null) {
                 inputs.add(inputRecipeElement);
             }
         }
-        
+
         for (JsonElement outputElement : JsonUtils.getArray(recipeObject, "outputs", new JsonArray())) {
             final SlimefunRecipeComponent outputRecipeElement = SlimefunRecipeComponent.deserialize(complex, outputElement);
             if (outputRecipeElement != null) {
                 outputs.add(outputRecipeElement);
             }
         }
-        
+
         for (JsonElement labelElement : JsonUtils.getArray(recipeObject, "labels", new JsonArray())) {
             if (! (labelElement instanceof JsonPrimitive jsonPrimitive) || ! jsonPrimitive.isString()) {
                 continue;
@@ -58,7 +58,7 @@ public class SlimefunRecipe {
                 labels.add(slimefunLabel);
             }
         }
-        
+
         return new SlimefunRecipe(parent, time, energy, inputs, outputs, labels);
     }
 

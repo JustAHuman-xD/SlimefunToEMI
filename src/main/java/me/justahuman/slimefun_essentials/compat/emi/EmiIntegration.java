@@ -5,7 +5,7 @@ import dev.emi.emi.api.EmiRegistry;
 import dev.emi.emi.api.recipe.EmiRecipe;
 import dev.emi.emi.api.stack.Comparison;
 import dev.emi.emi.api.stack.EmiStack;
-import me.justahuman.slimefun_essentials.client.ResourceLoader;
+import me.justahuman.slimefun_essentials.client.SlimefunRegistry;
 import me.justahuman.slimefun_essentials.client.SlimefunItemGroup;
 import me.justahuman.slimefun_essentials.client.SlimefunItemStack;
 import me.justahuman.slimefun_essentials.client.SlimefunRecipeCategory;
@@ -32,11 +32,7 @@ public class EmiIntegration implements EmiPlugin {
     
     @Override
     public void register(EmiRegistry emiRegistry) {
-        if (!Utils.shouldFunction()) {
-            return;
-        }
-
-        for (SlimefunItemStack slimefunItemStack : ResourceLoader.getSlimefunItems().values()) {
+        for (SlimefunItemStack slimefunItemStack : SlimefunRegistry.getSlimefunItems().values()) {
             emiRegistry.setDefaultComparison(EmiStack.of(slimefunItemStack.itemStack()), SLIMEFUN_ID);
         }
         slimefunCategories.clear();
@@ -60,7 +56,7 @@ public class EmiIntegration implements EmiPlugin {
             }
         }
 
-        for (SlimefunItemStack slimefunItemStack : SlimefunItemGroup.sort(List.copyOf(ResourceLoader.getSlimefunItems().values()))) {
+        for (SlimefunItemStack slimefunItemStack : SlimefunItemGroup.sort(List.copyOf(SlimefunRegistry.getSlimefunItems().values()))) {
             emiRegistry.addEmiStack(EmiStack.of(slimefunItemStack.itemStack()));
         }
 

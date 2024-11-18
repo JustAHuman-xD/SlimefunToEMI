@@ -22,10 +22,7 @@ import java.util.Locale;
 
 @Mixin(value = ItemStack.class, priority = 100000)
 public abstract class ItemStackMixin {
-
-    @Shadow
-    public abstract Item getItem();
-
+    @Shadow public abstract Item getItem();
     @Shadow public abstract ComponentChanges getComponentChanges();
 
     @Inject(method = "getTooltip", at = @At(value = "RETURN"))

@@ -12,8 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Slot.class)
 public abstract class SlotMixin {
-    @Shadow
-    public abstract ItemStack getStack();
+    @Shadow public abstract ItemStack getStack();
 
     @Inject(at = @At("HEAD"), method = "canBeHighlighted", cancellable = true)
     public void canBeHighlighted(CallbackInfoReturnable<Boolean> cir) {

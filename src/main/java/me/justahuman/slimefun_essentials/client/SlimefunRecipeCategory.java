@@ -65,8 +65,8 @@ public class SlimefunRecipeCategory {
     }
     
     public static void deserialize(String id, JsonObject categoryObject) {
-        final ItemStack itemStack = ResourceLoader.getSlimefunItem(id) != null
-                ? ResourceLoader.getSlimefunItem(id).itemStack()
+        final ItemStack itemStack = SlimefunRegistry.getSlimefunItem(id) != null
+                ? SlimefunRegistry.getSlimefunItem(id).itemStack()
                 : JsonUtils.deserializeItem(JsonUtils.getObject(categoryObject, "item", new JsonObject()));
         final String type = JsonUtils.getString(categoryObject, "type", "process");
         final Integer speed = JsonUtils.getInt(categoryObject, "speed", null);
@@ -152,8 +152,8 @@ public class SlimefunRecipeCategory {
             return recipeCategories.get(id);
         } else if (emptyCategories.containsKey(id)) {
             return emptyCategories.get(id);
-        } else if (ResourceLoader.getSlimefunItem(id) != null) {
-            final SlimefunItemStack itemStack = ResourceLoader.getSlimefunItem(id);
+        } else if (SlimefunRegistry.getSlimefunItem(id) != null) {
+            final SlimefunItemStack itemStack = SlimefunRegistry.getSlimefunItem(id);
             final SlimefunRecipeCategory category = new SlimefunRecipeCategory(id, itemStack.itemStack(), "empty", null, null, new ArrayList<>());
             emptyCategories.put(id, category);
         }

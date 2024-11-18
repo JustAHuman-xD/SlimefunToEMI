@@ -69,6 +69,10 @@ public class JsonUtils {
         return parent.get(key) instanceof JsonPrimitive primitive && primitive.isNumber() ? primitive.getAsInt() : def;
     }
 
+    public static JsonObject toJson(String string) {
+        return GSON.fromJson(string, JsonObject.class);
+    }
+
     public static String serializeItem(ItemStack itemStack) {
         final JsonObject json = new JsonObject();
         final ComponentChanges changes = itemStack.getComponentChanges();
@@ -81,7 +85,7 @@ public class JsonUtils {
     }
 
     public static ItemStack deserializeItem(String string) {
-        return deserializeItem(GSON.fromJson(string, JsonObject.class));
+        return deserializeItem(toJson(string));
     }
     
     public static ItemStack deserializeItem(JsonObject json) {
@@ -99,7 +103,7 @@ public class JsonUtils {
         } catch (Exception e) {
             SlimefunEssentials.LOGGER.error("Failed to deserialize item components", e);
         }
-        
+
         return itemStack;
     }
 

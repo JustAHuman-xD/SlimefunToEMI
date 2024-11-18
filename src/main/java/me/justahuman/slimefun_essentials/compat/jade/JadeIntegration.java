@@ -1,9 +1,8 @@
 package me.justahuman.slimefun_essentials.compat.jade;
 
-import me.justahuman.slimefun_essentials.client.ResourceLoader;
+import me.justahuman.slimefun_essentials.client.SlimefunRegistry;
 import me.justahuman.slimefun_essentials.client.SlimefunItemStack;
 import me.justahuman.slimefun_essentials.config.ModConfig;
-import me.justahuman.slimefun_essentials.utils.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import snownee.jade.api.BlockAccessor;
@@ -20,21 +19,19 @@ public class JadeIntegration implements IWailaPlugin {
         }
 
         registration.addRayTraceCallback(((hitResult, accessor, originalAccessor) -> {
-            if (!Utils.shouldFunction()) {
-                return accessor;
-            }
+            
 
             if (!(accessor instanceof BlockAccessor blockAccessor)) {
                 return accessor;
             }
 
             final BlockPos blockPos = blockAccessor.getPosition();
-            if (!ResourceLoader.isSlimefunItem(blockPos)) {
+            if (!SlimefunRegistry.isSlimefunItem(blockPos)) {
                 return accessor;
             }
 
-            final String id = ResourceLoader.getPlacedId(blockPos).toUpperCase();
-            final SlimefunItemStack slimefunItem = ResourceLoader.getSlimefunItem(id);
+            final String id = SlimefunRegistry.getPlacedId(blockPos).toUpperCase();
+            final SlimefunItemStack slimefunItem = SlimefunRegistry.getSlimefunItem(id);
             if (slimefunItem == null) {
                 return accessor;
             }

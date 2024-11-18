@@ -27,19 +27,11 @@ public class CompatUtils {
         return isModLoaded("jei");
     }
 
-    public static boolean isMoreBlockPredicatesLoaded() {
-        return isModLoaded("mbp");
-    }
-
     public static boolean isJadeLoaded() {
         return isModLoaded("jade");
     }
 
     public static boolean isBlockFeatureModLoaded() {
-        return isMoreBlockPredicatesLoaded() || isJadeLoaded();
-    }
-
-    public static boolean isPatchouliLoaded() {
-        return isModLoaded("patchouli");
+        return isJadeLoaded();
     }
 }

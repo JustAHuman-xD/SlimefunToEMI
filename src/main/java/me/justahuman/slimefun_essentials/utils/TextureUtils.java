@@ -13,25 +13,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TextureUtils {
-    public static final int PAGE_WIDTH = 116;
-    public static final int PAGE_HEIGHT = 156;
     public static final int PADDING = 4;
     public static final int REI_PADDING = 6;
     public static final Identifier WIDGETS = Utils.id("textures/gui/widgets.png");
     public static final Identifier WIDGETS_DARK = Utils.id("textures/gui/widgets_dark.png");
-    public static final Identifier WIDGETS_BOOK = Utils.id("textures/gui/widgets_book.png");
     public static final SlimefunLabel ENERGY = SlimefunLabel.of("energy", 36, 0, 7, 9);
     public static final SlimefunLabel ENERGY_POSITIVE = SlimefunLabel.of("energy_positive", 43, 0, 7, 9);
     public static final SlimefunLabel ENERGY_NEGATIVE = SlimefunLabel.of("energy_negative", 50, 0, 7, 9);
     public static final SlimefunLabel SLOT = SlimefunLabel.of("slot", 0, 238, 18, 18);
     public static final SlimefunLabel LARGE_SLOT = SlimefunLabel.of("output", 18, 230, 26, 26);
-    public static final SlimefunLabel ARROW = SlimefunLabel.builder().id("arrow")
-            .mode(DrawMode.LIGHT, 44, 222, 24, 17)
-            .mode(DrawMode.BOOK, 44, 245, 14, 11).build();
+    public static final SlimefunLabel ARROW = SlimefunLabel.of("arrow", 44, 222, 24, 17);
     public static final SlimefunLabel FILLED_ARROW = SlimefunLabel.of("filled_arrow", 44, 239, 24, 17);
-    public static final SlimefunLabel BACKWARDS_ARROW = SlimefunLabel.builder().id("backwards_arrow")
-            .mode(DrawMode.LIGHT, 67, 222, 24, 17)
-            .mode(DrawMode.BOOK, 58, 245, 14, 11).build();
+    public static final SlimefunLabel BACKWARDS_ARROW = SlimefunLabel.of("backwards_arrow", 67, 222, 24, 17);
     public static final SlimefunLabel FILLED_BACKWARDS_ARROW = SlimefunLabel.of("filled_backwards_arrow", 67, 239, 24, 17);
     public static final SlimefunLabel PEDESTAL = SlimefunLabel.of("pedestal", 0, 0, 18, 18);
     public static final SlimefunLabel ALTAR = SlimefunLabel.of("altar", 18, 0, 18, 18);
@@ -140,7 +133,7 @@ public class TextureUtils {
     }
 
     public static int getProcessHeight(DrawMode drawMode, SlimefunRecipe slimefunRecipe) {
-        return drawMode != DrawMode.BOOK && slimefunRecipe.hasOutputs() ? LARGE_SLOT.size(drawMode) : SLOT.size(drawMode);
+        return slimefunRecipe.hasOutputs() ? LARGE_SLOT.size(drawMode) : SLOT.size(drawMode);
     }
 
     public static int getReactorWidth(DrawMode drawMode, SlimefunRecipeCategory slimefunRecipeCategory) {
@@ -158,13 +151,9 @@ public class TextureUtils {
         width += SLOT.size(drawMode) * 2;
         width += PADDING * 2;
 
-        if (drawMode != DrawMode.BOOK) {
-            width += ARROW.width(drawMode) * 2;
-            width += PADDING * 2;
-            width += slimefunRecipe.hasOutputs() ? LARGE_SLOT.size(drawMode) : ENERGY.width(drawMode);
-        } else {
-            width += ENERGY.width(drawMode);
-        }
+        width += ARROW.width(drawMode) * 2;
+        width += PADDING * 2;
+        width += slimefunRecipe.hasOutputs() ? LARGE_SLOT.size(drawMode) : ENERGY.width(drawMode);
         return width;
     }
 
@@ -182,7 +171,7 @@ public class TextureUtils {
     }
 
     public static int getReactorHeight(DrawMode drawMode, SlimefunRecipe slimefunRecipe) {
-        return SLOT.size(drawMode) * 2 + (drawMode != DrawMode.BOOK && slimefunRecipe.hasOutputs() ? LARGE_SLOT.size(drawMode) : SLOT.size(drawMode));
+        return SLOT.size(drawMode) * 2 + (slimefunRecipe.hasOutputs() ? LARGE_SLOT.size(drawMode) : SLOT.size(drawMode));
     }
 
     public static int getSmelteryWidth(DrawMode drawMode, SlimefunRecipeCategory slimefunRecipeCategory) {
@@ -209,7 +198,7 @@ public class TextureUtils {
     }
 
     private static int withOutputWidth(DrawMode drawMode, SlimefunRecipe slimefunRecipe, int width) {
-        if (drawMode != DrawMode.BOOK && (slimefunRecipe.hasOutputs() || slimefunRecipe.hasEnergy())) {
+        if (slimefunRecipe.hasOutputs() || slimefunRecipe.hasEnergy()) {
             width += ARROW.width(drawMode);
             width += PADDING;
 

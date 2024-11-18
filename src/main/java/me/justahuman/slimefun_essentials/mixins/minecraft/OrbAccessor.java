@@ -6,6 +6,5 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(ExperienceOrbEntity.class)
 public interface OrbAccessor {
-    @Accessor
-    void setAmount(int pickingCount);
+    @Accessor void setAmount(int pickingCount);
 }

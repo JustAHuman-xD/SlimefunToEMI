@@ -10,7 +10,7 @@ public class SlimefunEmiCategory extends EmiRecipeCategory {
     
     public SlimefunEmiCategory(Identifier id, EmiStack workstation) {
         super(id, workstation);
-        
+
         this.displayName = workstation.getItemStack().getName();
     }
 

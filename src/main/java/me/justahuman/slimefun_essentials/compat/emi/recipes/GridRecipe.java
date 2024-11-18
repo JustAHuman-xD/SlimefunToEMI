@@ -23,7 +23,7 @@ public class GridRecipe extends ProcessRecipe {
     
         // Display Energy
         addEnergyWithCheck(widgets, offsets);
-        
+
         int i = 0;
         for (int y = 1; y <= this.side; y++) {
             for (int x = 1; x <= this.side; x++) {

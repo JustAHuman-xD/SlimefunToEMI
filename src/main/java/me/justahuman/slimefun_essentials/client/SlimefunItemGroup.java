@@ -23,8 +23,8 @@ public record SlimefunItemGroup(Identifier identifier, ItemStack itemStack, List
     private static final Map<String, SlimefunItemGroup> byContent = new HashMap<>();
     private static final SlimefunItemGroup EMPTY = new SlimefunItemGroup(Utils.id("empty"), ItemStack.EMPTY, List.of(), List.of());
 
-    public static void deserialize(String addon, String id, JsonObject groupObject) {
-        final Identifier identifier = Identifier.of(addon, id);
+    public static void deserialize(String id, JsonObject groupObject) {
+        final Identifier identifier = Identifier.tryParse(id);
         final ItemStack itemStack = JsonUtils.deserializeItem(JsonUtils.getObject(groupObject, "item", null));
         final List<String> content = new ArrayList<>();
         final List<String> requirements = new ArrayList<>();

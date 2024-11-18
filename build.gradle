@@ -1,6 +1,5 @@
 plugins {
     id 'fabric-loom' version '1.7-SNAPSHOT'
-    id 'maven-publish'
 }
 
 version = project.mod_version
@@ -30,13 +29,6 @@ repositories {
             includeGroup "curse.maven"
         }
     }
-    maven {
-        name = "MoreBlockPredicates, Patchouli"
-        url = "https://api.modrinth.com/maven"
-        content {
-            includeGroup "maven.modrinth"
-        }
-    }
     mavenCentral()
 }
 
@@ -45,8 +37,6 @@ dependencies {
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-
-    modImplementation "maven.modrinth:patchouli:${project.patchouli_version}"
 
     modImplementation "curse.maven:jade-324717:${project.jade_version}"
 
@@ -107,9 +97,4 @@ jar {
     from("LICENSE") {
         rename { "${it}_${project.archivesBaseName}" }
     }
-}
-
-// configure the maven publication
-publishing {
-    // TODO
 }
