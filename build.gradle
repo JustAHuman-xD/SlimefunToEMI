@@ -37,6 +37,16 @@ repositories {
             includeGroup "maven.modrinth"
         }
     }
+
+    maven {
+        name = "WTHIT"
+        url = "https://maven2.bai.lol"
+        content {
+            includeGroup "lol.bai"
+            includeGroup "mcp.mobius.waila"
+        }
+    }
+
     mavenCentral()
 }
 
@@ -49,6 +59,10 @@ dependencies {
     modImplementation "maven.modrinth:patchouli:${project.patchouli_version}"
 
     modImplementation "curse.maven:jade-324717:${project.jade_version}"
+
+    modCompileOnly "mcp.mobius.waila:wthit-api:fabric-${project.wthit_version}"
+    modRuntimeOnly "mcp.mobius.waila:wthit:fabric-${project.wthit_version}"
+    modRuntimeOnly "lol.bai:badpackets:fabric-${project.badpackets_version}"
 
     modImplementation ("dev.emi:emi-fabric:${project.emi_version}") {
         exclude(group: "net.fabricmc.fabric-api")

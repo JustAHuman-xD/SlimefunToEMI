@@ -1,0 +1,9 @@
+{
+  "slimefun_essentials:wthit_plugin": {
+    "entrypoints" : {
+      "client": "me.justahuman.slimefun_essentials.compat.wthit.WthitIntegration"
+    },
+    "side": "client",
+    "defaultEnabled": true
+  }
+}
