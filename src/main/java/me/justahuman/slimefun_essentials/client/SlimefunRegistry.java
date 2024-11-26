@@ -102,6 +102,11 @@ public class SlimefunRegistry {
         }
     }
 
+    public static ItemStack getItemStack(String id) {
+        SlimefunItemStack item = SLIMEFUN_ITEMS.get(id);
+        return item != null ? item.itemStack() : ItemStack.EMPTY;
+    }
+
     public static SlimefunItemStack getSlimefunItem(String id) {
         return SLIMEFUN_ITEMS.get(id);
     }

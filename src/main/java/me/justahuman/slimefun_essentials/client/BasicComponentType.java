@@ -34,8 +34,6 @@ public class BasicComponentType implements DisplayComponentType {
 
     @Override
     public void draw(SlimefunRecipe recipe, DrawMode mode, DrawContext context, int x, int y, int mouseX, int mouseY, List<TooltipComponent> tooltip) {
-        CustomRenderable renderable = mode == DrawMode.LIGHT ? light : dark;
-        renderable.update(recipe);
-        draw(recipe, context, renderable.identifier(), tooltip, x, y, mouseX, mouseY, renderable.width(), renderable.height(), renderable.u(), renderable.v(), renderable.textureWidth(), renderable.textureHeight());
+        draw(recipe, mode == DrawMode.LIGHT ? light : dark, context, x, y, mouseX, mouseY, tooltip);
     }
 }

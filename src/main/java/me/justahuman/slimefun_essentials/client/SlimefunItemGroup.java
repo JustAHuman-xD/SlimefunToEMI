@@ -19,8 +19,8 @@ import java.util.List;
 import java.util.Map;
 
 public record SlimefunItemGroup(Identifier identifier, ItemStack itemStack, List<String> content, List<String> requirements) {
-    private static final Map<String, SlimefunItemGroup> itemGroups = new LinkedHashMap<>();
-    private static final Map<String, SlimefunItemGroup> byContent = new HashMap<>();
+    private static final Map<String, SlimefunItemGroup> ITEM_GROUPS = new LinkedHashMap<>();
+    private static final Map<String, SlimefunItemGroup> BY_CONTENT = new HashMap<>();
     private static final SlimefunItemGroup EMPTY = new SlimefunItemGroup(Utils.id("empty"), ItemStack.EMPTY, List.of(), List.of());
 
     public static void deserialize(String id, JsonObject groupObject) {
@@ -48,23 +48,23 @@ public record SlimefunItemGroup(Identifier identifier, ItemStack itemStack, List
         }
 
         SlimefunItemGroup itemGroup = new SlimefunItemGroup(identifier, itemStack, content, requirements);
-        itemGroups.put(identifier.toString(), itemGroup);
-        content.forEach(contentId -> byContent.put(contentId, itemGroup));
+        ITEM_GROUPS.put(identifier.toString(), itemGroup);
+        content.forEach(contentId -> BY_CONTENT.put(contentId, itemGroup));
     }
 
     @NonNull
     public static Map<String, SlimefunItemGroup> getItemGroups() {
-        return itemGroups;
+        return ITEM_GROUPS;
     }
 
     public static void clear() {
-        itemGroups.clear();
+        ITEM_GROUPS.clear();
     }
 
     public static void addParents() {
-        for (SlimefunItemGroup itemGroup : itemGroups.values()) {
+        for (SlimefunItemGroup itemGroup : ITEM_GROUPS.values()) {
             for (String content : itemGroup.content()) {
-                final SlimefunItemGroup child = itemGroups.get(content);
+                final SlimefunItemGroup child = ITEM_GROUPS.get(content);
                 if (child != null) {
                     child.requirements().add(SlimefunEssentials.MOD_ID + ":" + itemGroup.identifier().toString().replace(":", "_"));
                 }
@@ -73,12 +73,12 @@ public record SlimefunItemGroup(Identifier identifier, ItemStack itemStack, List
     }
 
     public static List<SlimefunItemStack> sort(List<SlimefunItemStack> itemStacks) {
-        final List<SlimefunItemGroup> groups = new ArrayList<>(itemGroups.values());
+        final List<SlimefunItemGroup> groups = new ArrayList<>(ITEM_GROUPS.values());
         itemStacks = new ArrayList<>(itemStacks);
         groups.add(EMPTY);
 
-        itemStacks.sort(Comparator.comparingInt(stack -> byContent.getOrDefault(stack.id(), EMPTY).content().indexOf(stack.id())));
-        itemStacks.sort(Comparator.comparingInt(stack -> groups.indexOf(byContent.getOrDefault(stack.id(), EMPTY))));
+        itemStacks.sort(Comparator.comparingInt(stack -> BY_CONTENT.getOrDefault(stack.id(), EMPTY).content().indexOf(stack.id())));
+        itemStacks.sort(Comparator.comparingInt(stack -> groups.indexOf(BY_CONTENT.getOrDefault(stack.id(), EMPTY))));
         return itemStacks;
     }
 }

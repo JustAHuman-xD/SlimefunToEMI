@@ -36,9 +36,10 @@ public interface RecipeCondition {
     }
 
     private static Function<SlimefunRecipe, Number> getMapper(String serializedValue) {
-        return switch (serializedValue) {
+        Function<SlimefunRecipe, Number> mapper = switch (serializedValue) {
+            case "%sf_ticks%" -> SlimefunRecipe::sfTicks;
             case "%time_seconds%" -> SlimefunRecipe::seconds;
-            case "%time_ticks%" -> SlimefunRecipe::sfTicks;
+            case "%time_ticks%" -> SlimefunRecipe::ticks;
             case "%time_millis%" -> SlimefunRecipe::millis;
             case "%energy%" -> SlimefunRecipe::energy;
             case "%total_energy%" -> SlimefunRecipe::totalEnergy;
@@ -53,5 +54,6 @@ public interface RecipeCondition {
                 yield recipe -> finalValue;
             }
         };
+        return mapper.andThen(number -> number == null ? 0 : number);
     }
 }

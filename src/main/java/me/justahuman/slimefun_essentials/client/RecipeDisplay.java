@@ -107,14 +107,14 @@ public class RecipeDisplay {
                         width += type.width();
                         height = Math.max(height, type.height() + TextureUtils.PADDING * 2);
                     }
-                    width += TextureUtils.PADDING;
                 } else {
                     DisplayComponentType type = DisplayComponentType.get("slot");
-                    width += type.width() + TextureUtils.PADDING;
+                    width += type.width();
                     height = Math.max(height, type.height() + TextureUtils.PADDING * 2);
                 }
 
                 if (recipe.hasEnergy() || recipe.hasOutputs()) {
+                    width += TextureUtils.PADDING;
                     DisplayComponentType type = DisplayComponentType.get("arrow_right");
                     width += type.width() + TextureUtils.PADDING;
                     height = Math.max(height, type.height() + TextureUtils.PADDING * 2);
@@ -126,7 +126,6 @@ public class RecipeDisplay {
                         width += type.width();
                         height = Math.max(height, type.height() + TextureUtils.PADDING * 2);
                     }
-                    width += TextureUtils.PADDING;
                 }
 
                 int x = TextureUtils.PADDING;
@@ -152,14 +151,14 @@ public class RecipeDisplay {
                         x += type.width();
                         i++;
                     }
-                    x += TextureUtils.PADDING;
                 } else {
                     DisplayComponentType type = DisplayComponentType.get("slot");
                     components.add(new RecipeDisplayComponent("slot", x, centered(type, height)));
-                    x += type.width() + TextureUtils.PADDING;
+                    x += type.width();
                 }
 
                 if (recipe.hasEnergy() || recipe.hasOutputs()) {
+                    x += TextureUtils.PADDING;
                     DisplayComponentType type = DisplayComponentType.get("filling_arrow_right");
                     components.add(new RecipeDisplayComponent("filling_arrow_right", x, centered(type, height)));
                     x += type.width() + TextureUtils.PADDING;

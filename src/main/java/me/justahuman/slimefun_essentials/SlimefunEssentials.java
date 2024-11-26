@@ -1,5 +1,10 @@
 package me.justahuman.slimefun_essentials;
 
+import me.justahuman.slimefun_essentials.api.DisplayComponentType;
+import me.justahuman.slimefun_essentials.client.RecipeCategory;
+import me.justahuman.slimefun_essentials.client.RecipeDisplay;
+import me.justahuman.slimefun_essentials.client.RecipeDisplayComponent;
+import me.justahuman.slimefun_essentials.client.SlimefunItemGroup;
 import me.justahuman.slimefun_essentials.client.SlimefunRegistry;
 import me.justahuman.slimefun_essentials.client.payloads.ComponentTypePayload;
 import me.justahuman.slimefun_essentials.client.payloads.ItemGroupsPayload;
@@ -14,6 +19,7 @@ import me.justahuman.slimefun_essentials.utils.CompatUtils;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.minecraft.client.option.KeyBinding;
@@ -47,6 +53,15 @@ public class SlimefunEssentials implements ClientModInitializer {
         ClientPlayNetworking.registerGlobalReceiver(Payloads.ITEM_GROUPS_CHANNEL, (payload, context) -> {});
         ClientPlayNetworking.registerGlobalReceiver(Payloads.RECIPE_CATEGORY_CHANNEL, (payload, context) -> {});
         ClientPlayNetworking.registerGlobalReceiver(Payloads.RECIPE_DISPLAY_CHANNEL, (payload, context) -> {});
+
+        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
+            RecipeCategory.clear();
+            DisplayComponentType.clear();
+            SlimefunItemGroup.clear();
+            RecipeDisplay.clear();
+            SlimefunRegistry.reset();
+            Payloads.reset();
+        });
 
         if (CompatUtils.isClothConfigLoaded()) {
             final KeyBinding keyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding("slimefun_essentials.key_bind.open_config", GLFW.GLFW_KEY_F6, "slimefun_essentials.title"));

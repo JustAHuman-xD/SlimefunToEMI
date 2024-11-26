@@ -21,15 +21,16 @@ public class RecipeCategory {
 
     private final String id;
     private final ItemStack itemStack;
+    private final String display;
     private final Integer speed;
     private final Integer energy;
     private final List<SlimefunRecipe> childRecipes;
     private SlimefunRecipe recipe = null;
-    private String display = "dynamic";
 
-    public RecipeCategory(String id, ItemStack itemStack, Integer speed, Integer energy, List<SlimefunRecipe> childRecipes) {
+    public RecipeCategory(String id, ItemStack itemStack, String display, Integer speed, Integer energy, List<SlimefunRecipe> childRecipes) {
         this.id = id;
         this.itemStack = itemStack;
+        this.display = display;
         this.speed = speed;
         this.energy = energy;
         this.childRecipes = childRecipes;
@@ -44,7 +45,7 @@ public class RecipeCategory {
     }
 
     public ItemStack itemStack() {
-        return this.itemStack;
+        return !this.itemStack.isEmpty() ? this.itemStack : SlimefunRegistry.getItemStack(this.id);
     }
 
     public Integer speed() {
@@ -64,14 +65,13 @@ public class RecipeCategory {
     }
     
     public static void deserialize(String id, JsonObject categoryObject) {
-        final ItemStack itemStack = SlimefunRegistry.getSlimefunItem(id) != null
-                ? SlimefunRegistry.getSlimefunItem(id).itemStack()
-                : JsonUtils.deserializeItem(JsonUtils.get(categoryObject, "item", new JsonObject()));
+        final String display = JsonUtils.get(categoryObject, "display", "dynamic");
+        final ItemStack itemStack = JsonUtils.deserializeItem(JsonUtils.get(categoryObject, "item", new JsonObject()));
         final Integer speed = JsonUtils.get(categoryObject, "speed", (Integer) null);
         final Integer energy = JsonUtils.get(categoryObject, "energy", (Integer) null);
         final List<SlimefunRecipe> recipes = new ArrayList<>();
 
-        final RecipeCategory category = new RecipeCategory(id, itemStack, speed, energy, recipes);
+        final RecipeCategory category = new RecipeCategory(id, itemStack, display, speed, energy, recipes);
         for (JsonElement recipeElement : JsonUtils.get(categoryObject, "recipes", new JsonArray())) {
             if (recipeElement instanceof JsonObject recipeObject) {
                 recipes.add(SlimefunRecipe.deserialize(category, recipeObject, energy));
@@ -152,7 +152,7 @@ public class RecipeCategory {
             return EMPTY_CATEGORIES.get(id);
         } else if (SlimefunRegistry.getSlimefunItem(id) != null) {
             final SlimefunItemStack itemStack = SlimefunRegistry.getSlimefunItem(id);
-            final RecipeCategory category = new RecipeCategory(id, itemStack.itemStack(), null, null, new ArrayList<>());
+            final RecipeCategory category = new RecipeCategory(id, itemStack.itemStack(), "none", null, null, new ArrayList<>());
             EMPTY_CATEGORIES.put(id, category);
         }
         return null;

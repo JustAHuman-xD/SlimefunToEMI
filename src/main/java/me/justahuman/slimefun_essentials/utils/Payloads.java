@@ -3,6 +3,7 @@ package me.justahuman.slimefun_essentials.utils;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 import me.justahuman.slimefun_essentials.SlimefunEssentials;
+import me.justahuman.slimefun_essentials.client.RecipeCategory;
 import me.justahuman.slimefun_essentials.client.payloads.ComponentTypePayload;
 import me.justahuman.slimefun_essentials.client.payloads.ItemGroupsPayload;
 import me.justahuman.slimefun_essentials.client.payloads.ItemsPayload;
@@ -31,6 +32,17 @@ public class Payloads {
     private static final int SPLIT_MESSAGE_SIZE = MAX_MESSAGE_SIZE - 4 - 4 - 4;
     private static final Map<Class<?>, Integer> PACKET_COUNTS = new HashMap<>();
     private static final Map<Class<?>, Integer> EXPECTED_PACKETS = new HashMap<>();
+    private static boolean metExpected = false;
+
+    public static boolean metExpected() {
+        return metExpected;
+    }
+
+    public static void reset() {
+        PACKET_COUNTS.clear();
+        EXPECTED_PACKETS.clear();
+        metExpected = false;
+    }
 
     public static void expect(LoadingStatePayload payload) {
         EXPECTED_PACKETS.clear();
@@ -38,20 +50,23 @@ public class Payloads {
         EXPECTED_PACKETS.put(ItemsPayload.class, payload.itemPackets());
         EXPECTED_PACKETS.put(RecipeCategoryPayload.class, payload.categoryPackets());
         EXPECTED_PACKETS.put(RecipeDisplayPayload.class, payload.displayPackets());
-        if (passedExpected()) {
-            SlimefunEssentials.LOGGER.info("Received every expected packet!!");
-        }
+        checkMetExpected();
     }
 
-    private static boolean passedExpected() {
+    private static void checkMetExpected() {
         for (Map.Entry<Class<?>, Integer> expected : EXPECTED_PACKETS.entrySet()) {
             if (PACKET_COUNTS.getOrDefault(expected.getKey(), 0) < expected.getValue()) {
-                return false;
+                return;
             } else if (PACKET_COUNTS.getOrDefault(expected.getKey(), 0) > expected.getValue()) {
-                SlimefunEssentials.LOGGER.warn("Received more packets than expected for " + expected.getKey().getSimpleName());
+                SlimefunEssentials.LOGGER.warn("Received more packets than expected for {}", expected.getKey().getSimpleName());
             }
         }
-        return !EXPECTED_PACKETS.isEmpty();
+
+        metExpected = !EXPECTED_PACKETS.isEmpty();
+        if (metExpected) {
+            SlimefunEssentials.LOGGER.info("Received every expected packet!!");
+            RecipeCategory.finalizeCategories();
+        }
     }
 
     public static <P extends CustomPayload> CustomPayload.Id<P> newChannel(String channel) {
@@ -68,10 +83,7 @@ public class Payloads {
             @Override
             public P decode(PacketByteBuf buf) {
                 PACKET_COUNTS.compute(empty.getClass(), (k, v) -> v == null ? 1 : v + 1);
-
-                if (passedExpected()) {
-                    SlimefunEssentials.LOGGER.info("Received every expected packet!!");
-                }
+                checkMetExpected();
 
                 byte[] bytes = new byte[buf.readableBytes()];
                 for (int i = 0; i < bytes.length; i++) {

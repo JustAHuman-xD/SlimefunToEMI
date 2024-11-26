@@ -14,24 +14,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public record RecipeDisplayComponent(String type, int x, int y, int index, boolean output, List<TooltipComponent> tooltipOverride) {
+public record RecipeDisplayComponent(String type, int x, int y, int index, boolean output, List<TooltipComponent> tooltipOverride, Map<SlimefunRecipe, List<TooltipComponent>> tooltipCache) {
     public static final List<TooltipComponent> EMPTY_TOOLTIP = List.of();
-    public static final Map<SlimefunRecipe, List<TooltipComponent>> TOOLTIP_CACHE = new HashMap<>();
 
     public RecipeDisplayComponent(String type, int x, int y) {
-        this(type, x, y, -1, false, EMPTY_TOOLTIP);
+        this(type, x, y, -1, false, EMPTY_TOOLTIP, new HashMap<>());
     }
 
     public RecipeDisplayComponent(String type, int x, int y, int index) {
-        this(type, x, y, index, false, EMPTY_TOOLTIP);
+        this(type, x, y, index, false, EMPTY_TOOLTIP, new HashMap<>());
     }
 
     public RecipeDisplayComponent(String type, int x, int y, int index, boolean output) {
-        this(type, x, y, index, output, EMPTY_TOOLTIP);
+        this(type, x, y, index, output, EMPTY_TOOLTIP, new HashMap<>());
     }
 
     public RecipeDisplayComponent(String type, int x, int y, List<TooltipComponent> tooltipOverride) {
-        this(type, x, y, -1, false, tooltipOverride);
+        this(type, x, y, -1, false, tooltipOverride, new HashMap<>());
     }
 
     public int width() {
@@ -43,7 +42,7 @@ public record RecipeDisplayComponent(String type, int x, int y, int index, boole
     }
 
     public List<TooltipComponent> tooltip(DrawMode drawMode, SlimefunRecipe recipe) {
-        return TOOLTIP_CACHE.computeIfAbsent(recipe, key -> {
+        return tooltipCache.computeIfAbsent(recipe, key -> {
             if (this.tooltipOverride.isEmpty()) {
                 return getType().tooltip(drawMode, recipe);
             }
@@ -71,6 +70,6 @@ public record RecipeDisplayComponent(String type, int x, int y, int index, boole
         return new RecipeDisplayComponent(type, x, y, index, output, tooltip.stream()
                 .map(Text::literal)
                 .map(MutableText::asOrderedText)
-                .map(TooltipComponent::of).toList());
+                .map(TooltipComponent::of).toList(), new HashMap<>());
     }
 }

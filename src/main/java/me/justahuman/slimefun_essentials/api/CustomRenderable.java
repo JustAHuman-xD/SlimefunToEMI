@@ -2,6 +2,7 @@ package me.justahuman.slimefun_essentials.api;
 
 import com.google.gson.JsonObject;
 import me.justahuman.slimefun_essentials.client.ConditionalRenderable;
+import me.justahuman.slimefun_essentials.client.OptionalRenderable;
 import me.justahuman.slimefun_essentials.client.SimpleRenderable;
 import me.justahuman.slimefun_essentials.client.SlimefunRecipe;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
@@ -20,12 +21,21 @@ public interface CustomRenderable {
     List<TooltipComponent> tooltip();
 
     default void update(SlimefunRecipe recipe) {}
+    default boolean canRender() {
+        return true;
+    }
 
     static CustomRenderable deserialize(JsonObject jsonObject) {
         if (jsonObject.has("condition")) {
-            return new ConditionalRenderable(
-                    deserialize(jsonObject.getAsJsonObject("passed")),
-                    deserialize(jsonObject.getAsJsonObject("failed")),
+            if (jsonObject.has("passed") && jsonObject.has("failed")) {
+                return new ConditionalRenderable(
+                        deserialize(jsonObject.getAsJsonObject("passed")),
+                        deserialize(jsonObject.getAsJsonObject("failed")),
+                        RecipeCondition.deserialize(jsonObject.get("condition"))
+                );
+            }
+            return new OptionalRenderable(
+                    deserialize(jsonObject.getAsJsonObject("renderable")),
                     RecipeCondition.deserialize(jsonObject.get("condition"))
             );
         } else {

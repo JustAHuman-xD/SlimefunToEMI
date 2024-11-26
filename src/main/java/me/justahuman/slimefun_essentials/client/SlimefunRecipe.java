@@ -27,7 +27,7 @@ public class SlimefunRecipe {
     }
 
     public static SlimefunRecipe deserialize(RecipeCategory parent, JsonObject recipeObject, Integer workstationEnergy) {
-        final Integer ticks = JsonUtils.get(recipeObject, "ticks", (Integer) null);
+        final Integer sfTicks = JsonUtils.get(recipeObject, "sf_ticks", (Integer) null);
         final Integer energy = JsonUtils.get(recipeObject, "energy", workstationEnergy);
         final List<RecipeComponent> inputs = new ArrayList<>();
         final List<RecipeComponent> outputs = new ArrayList<>();
@@ -59,7 +59,7 @@ public class SlimefunRecipe {
             }
         }
 
-        return new SlimefunRecipe(parent, ticks, energy, inputs, outputs, labels);
+        return new SlimefunRecipe(parent, sfTicks, energy, inputs, outputs, labels);
     }
 
     public boolean hasLabels() {
@@ -86,19 +86,19 @@ public class SlimefunRecipe {
         return this.parent;
     }
 
-    public Integer sfTicks() {
-        return hasTime() ? this.sfTicks / this.parent.speed() : 1;
+    public int sfTicks() {
+        return hasTime() ? Math.max(1, this.sfTicks / this.parent.speed()) : 0;
     }
 
-    public Integer ticks() {
+    public int ticks() {
         return seconds() * 20;
     }
 
-    public Integer seconds() {
-        return sfTicks() * SlimefunRegistry.getTicksPerSecond();
+    public int seconds() {
+        return sfTicks() / SlimefunRegistry.getTicksPerSecond();
     }
 
-    public Integer millis() {
+    public int millis() {
         return seconds() * 1000;
     }
 
@@ -107,7 +107,10 @@ public class SlimefunRecipe {
     }
 
     public Integer totalEnergy() {
-        return this.hasEnergy() ? sfTicks() * this.energy : null;
+        if (!this.hasEnergy()) {
+            return null;
+        }
+        return hasTime() ? this.energy * sfTicks() : this.energy;
     }
 
     public List<RecipeComponent> inputs() {

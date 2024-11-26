@@ -48,36 +48,44 @@ public class FillingComponentType implements DisplayComponentType {
 
     @Override
     public List<TooltipComponent> tooltip(DrawMode drawMode, SlimefunRecipe recipe) {
-        return drawMode == DrawMode.LIGHT ? Utils.updateTooltip(light.tooltip(), recipe) : Utils.updateTooltip(dark.tooltip(), recipe);
+        CustomRenderable base = drawMode == DrawMode.LIGHT ? light : dark;
+        CustomRenderable fill = drawMode == DrawMode.LIGHT ? lightFill : darkFill;
+        fill.update(recipe);
+        return fill.canRender() ? Utils.updateTooltip(fill.tooltip(), recipe) : Utils.updateTooltip(base.tooltip(), recipe);
     }
 
     @Override
     public void draw(SlimefunRecipe recipe, DrawMode mode, DrawContext context, int x, int y, int mouseX, int mouseY, List<TooltipComponent> tooltip) {
         int time = this.timeToFill.apply(recipe);
-        int subTime = (int) (System.currentTimeMillis() % time);
+        int subTime = time <= 0 ? 0 : (int) (System.currentTimeMillis() % time);
         boolean emptyToFull = this.emptyToFull.passes(recipe);
         boolean startToEnd = this.startToEnd.passes(recipe);
         if (!startToEnd ^ !emptyToFull) {
             subTime = time - subTime;
         }
 
-        CustomRenderable renderable = mode == DrawMode.LIGHT ? light : dark;
-        renderable.update(recipe);
+        draw(recipe, mode == DrawMode.LIGHT ? light : dark, context, x, y, mouseX, mouseY, tooltip);
+
+        CustomRenderable fill = mode == DrawMode.LIGHT ? lightFill : darkFill;
+        fill.update(recipe);
+        if (!fill.canRender()) {
+            return;
+        }
 
         int mx = x;
         int my = y;
-        int w = renderable.width();
-        int mw = renderable.width();
-        int h = renderable.height();
-        int mh = renderable.height();
-        int u = renderable.u();
-        int mu = renderable.u();
-        int v = renderable.v();
-        int mv = renderable.v();
-        int rw = renderable.width();
-        int mrw = renderable.width();
-        int rh = renderable.height();
-        int mrh = renderable.height();
+        int w = fill.width();
+        int mw = fill.width();
+        int h = fill.height();
+        int mh = fill.height();
+        int u = fill.u();
+        int mu = fill.u();
+        int v = fill.v();
+        int mv = fill.v();
+        int rw = fill.width();
+        int mrw = fill.width();
+        int rh = fill.height();
+        int mrh = fill.height();
 
         if (horizontal) {
             if (startToEnd) {
@@ -101,6 +109,6 @@ public class FillingComponentType implements DisplayComponentType {
             }
         }
 
-        draw(recipe, context, renderable.identifier(), tooltip, mx, my, mouseX, mouseY, mw, mh, mu, mv, mrw, mrh);
+        draw(recipe, context, fill.identifier(), List.of(), mx, my, mouseX, mouseY, mw, mh, mu, mv, mrw, mrh, fill.textureWidth(), fill.textureHeight());
     }
 }

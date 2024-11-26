@@ -83,13 +83,15 @@ public class Utils {
     }
 
     public static String fillPlaceholders(String string, SlimefunRecipe recipe) {
-        return string.replace("%time_seconds%", recipe.seconds().toString())
-                .replace("%time_ticks%", recipe.ticks().toString())
-                .replace("%time_millis%", recipe.millis().toString())
-                .replace("%energy%", recipe.energy().toString())
-                .replace("%total_energy%", recipe.totalEnergy().toString())
-                .replace("%inputs%", recipe.inputs().size() + "")
-                .replace("%outputs%", recipe.outputs().size() + "");
+        return string.replace("%sf_ticks%", "%s".formatted(recipe.sfTicks()))
+                .replace("%time_seconds%", "%s".formatted(recipe.seconds()))
+                .replace("%time_ticks%", "%s".formatted(recipe.ticks()))
+                .replace("%time_millis%", "%s".formatted(recipe.millis()))
+                .replace("%energy%", "%s".formatted(recipe.energy()))
+                .replace("%total_energy%", "%s".formatted(recipe.totalEnergy()))
+                .replace("%abs_total_energy%", "%s".formatted(Math.abs(recipe.totalEnergy())))
+                .replace("%inputs%", "%s".formatted(recipe.inputs().size()))
+                .replace("%outputs%", "%s".formatted(recipe.outputs().size()));
     }
 
     public static List<TooltipComponent> updateTooltip(List<TooltipComponent> tooltip, SlimefunRecipe recipe) {
@@ -97,8 +99,7 @@ public class Utils {
             return tooltip;
         }
 
-        List<String> strings = tooltip.stream().map(component -> from(((TextTooltipAccessor) component).getText()))
-                .map(string -> fillPlaceholders(string, recipe)).toList();
+        List<String> strings = tooltip.stream().map(component -> from(((TextTooltipAccessor) component).getText())).map(string -> fillPlaceholders(string, recipe)).toList();
         List<TooltipComponent> newTooltip = new ArrayList<>();
         strings.forEach(string -> newTooltip.add(TooltipComponent.of(Text.literal(string).asOrderedText())));
         return newTooltip;

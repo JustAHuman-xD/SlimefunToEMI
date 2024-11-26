@@ -11,6 +11,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.tooltip.HoveredTooltipPositioner;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
+import net.minecraft.client.render.GameRenderer;
 import net.minecraft.util.Identifier;
 
 import java.util.HashMap;
@@ -26,14 +27,26 @@ public interface DisplayComponentType {
 
     void draw(SlimefunRecipe recipe, DrawMode mode, DrawContext context, int x, int y, int mouseX, int mouseY, List<TooltipComponent> tooltip);
 
-    default void draw(SlimefunRecipe recipe, DrawContext context, Identifier identifier, List<TooltipComponent> tooltip, int x, int y, int mouseX, int mouseY, int width, int height, int u, int v, int textureWidth, int textureHeight) {
+    default void draw(SlimefunRecipe recipe, CustomRenderable renderable, DrawContext context, int x, int y, int mouseX, int mouseY, List<TooltipComponent> tooltip) {
+        renderable.update(recipe);
+        if (renderable.canRender()) {
+            draw(recipe, context, renderable.identifier(), tooltip, x, y, mouseX, mouseY, renderable.width(), renderable.height(), renderable.u(), renderable.v(), renderable.width(), renderable.height(), renderable.textureWidth(), renderable.textureHeight());
+        }
+    }
+
+    default void draw(SlimefunRecipe recipe, DrawContext context, Identifier identifier, List<TooltipComponent> tooltip, int x, int y, int mouseX, int mouseY, int width, int height, int u, int v, int regionWidth, int regionHeight, int textureWidth, int textureHeight) {
+        RenderSystem.setShader(GameRenderer::getPositionTexProgram);
         RenderSystem.enableBlend();
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-        context.drawTexture(identifier, x, y, width, height, u, v, width, height, textureWidth, textureHeight);
+        context.drawTexture(identifier, x, y, width, height, u, v, regionWidth, regionHeight, textureWidth, textureHeight);
 
         if (!tooltip.isEmpty() && mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height) {
             ((DrawContextInvoker) context).callDrawTooltip(MinecraftClient.getInstance().textRenderer, tooltip, x, y, HoveredTooltipPositioner.INSTANCE);
         }
+    }
+
+    static void clear() {
+        COMPONENT_TYPES.clear();
     }
 
     static DisplayComponentType get(String id) {

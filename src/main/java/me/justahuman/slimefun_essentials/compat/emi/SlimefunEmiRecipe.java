@@ -62,7 +62,7 @@ public class SlimefunEmiRecipe implements EmiRecipe {
     @Override
     public void addWidgets(WidgetHolder widgets) {
         for (RecipeDisplayComponent component : category.display().components(recipe)) {
-            EmiIntegration.wrap(widgets, component, recipe, inputs, outputs);
+            EmiIntegration.wrap(this, widgets, component, recipe, inputs, outputs);
         }
     }
 }
