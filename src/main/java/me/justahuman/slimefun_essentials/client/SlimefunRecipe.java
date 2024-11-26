@@ -91,15 +91,15 @@ public class SlimefunRecipe {
     }
 
     public int ticks() {
-        return seconds() * 20;
+        return (int) (seconds() * 20);
     }
 
-    public int seconds() {
-        return sfTicks() / SlimefunRegistry.getTicksPerSecond();
+    public double seconds() {
+        return (double) sfTicks() / SlimefunRegistry.getTicksPerSecond();
     }
 
     public int millis() {
-        return seconds() * 1000;
+        return (int) (seconds() * 1000);
     }
 
     public Integer energy() {
