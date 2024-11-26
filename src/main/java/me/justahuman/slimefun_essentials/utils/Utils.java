@@ -83,15 +83,24 @@ public class Utils {
     }
 
     public static String fillPlaceholders(String string, SlimefunRecipe recipe) {
-        return string.replace("%sf_ticks%", "%s".formatted(recipe.sfTicks()))
-                .replace("%time_seconds%", "%s".formatted(recipe.seconds()))
-                .replace("%time_ticks%", "%s".formatted(recipe.ticks()))
-                .replace("%time_millis%", "%s".formatted(recipe.millis()))
-                .replace("%energy%", "%s".formatted(recipe.energy()))
-                .replace("%total_energy%", "%s".formatted(recipe.totalEnergy()))
-                .replace("%abs_total_energy%", "%s".formatted(Math.abs(recipe.totalEnergy())))
-                .replace("%inputs%", "%s".formatted(recipe.inputs().size()))
-                .replace("%outputs%", "%s".formatted(recipe.outputs().size()));
+        if (recipe.hasTime()) {
+            string = string.replace("%sf_ticks%", "%s".formatted(recipe.sfTicks()))
+                    .replace("%time_seconds%", "%s".formatted(recipe.seconds()))
+                    .replace("%time_ticks%", "%s".formatted(recipe.ticks()))
+                    .replace("%time_millis%", "%s".formatted(recipe.millis()));
+        }
+        if (recipe.hasEnergy()) {
+            string = string.replace("%energy%", "%s".formatted(recipe.energy()))
+                    .replace("%total_energy%", "%s".formatted(recipe.totalEnergy()))
+                    .replace("%abs_total_energy%", "%s".formatted(Math.abs(recipe.totalEnergy())));
+        }
+        if (recipe.hasInputs()) {
+            string = string.replace("%inputs%", "%s".formatted(recipe.inputs().size()));
+        }
+        if (recipe.hasOutputs()) {
+            string = string.replace("%outputs%", "%s".formatted(recipe.outputs().size()));
+        }
+        return string;
     }
 
     public static List<TooltipComponent> updateTooltip(List<TooltipComponent> tooltip, SlimefunRecipe recipe) {
