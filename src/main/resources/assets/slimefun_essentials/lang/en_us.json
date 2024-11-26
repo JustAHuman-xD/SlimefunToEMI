@@ -2,25 +2,13 @@
   "slimefun_essentials.title": "Slimefun Essentials (SFE)",
 
   "slimefun_essentials.key_bind.open_config": "Open Config",
-
   "slimefun_essentials.config.category.general": "General",
   "slimefun_essentials.config.option.recipe_features": "Enable Recipe Features",
   "slimefun_essentials.config.option.recipe_features.tooltip": "-> Enables Jei, Rei, & Emi compatibility",
-
 
   "slimefun_essentials.config.category.visual": "Visual",
   "slimefun_essentials.config.option.replace_item_identifiers": "Replace Item Ids",
   "slimefun_essentials.config.option.replace_item_identifiers.tooltip": "E.g. \"minecraft:gunpowder\" -> \"slimefun:pure_ore_cluster\"",
   "slimefun_essentials.config.option.hide_background_tooltips": "Hide Background Tooltips",
-  "slimefun_essentials.config.option.hide_background_tooltips.tooltip": "Hides the tooltip of items meant just as background/filler\nE.g. the grey glass panes in the Slimefun guide.",
-
-  "slimefun_essentials.recipes.category.slimefun" : "%s",
-  "slimefun_essentials.recipes.time": "%s Seconds (%s Ticks)",
-  "slimefun_essentials.recipes.energy.use": "%sJ Used",
-  "slimefun_essentials.recipes.energy.generate": "%sJ Generated",
-  "slimefun_essentials.recipes.label.day": "This block must be exposed to the Sun to process this Recipe!",
-  "slimefun_essentials.recipes.label.night": "This block must be exposed to the Moon to process this Recipe!",
-  "slimefun_essentials.recipes.detail.time": "  - Takes %s second(s)",
-  "slimefun_essentials.recipes.detail.energy.use": "  - Uses %s joule(s)",
-  "slimefun_essentials.recipes.detail.energy.generate": "  - Generates %s joule(s)"
+  "slimefun_essentials.config.option.hide_background_tooltips.tooltip": "Hides the tooltip of items meant just as background/filler\nE.g. the grey glass panes in the Slimefun guide."
 }

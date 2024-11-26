@@ -32,10 +32,10 @@ public class ModConfig {
             SlimefunEssentials.LOGGER.error("Error occurred while reading Config!", e);
         }
 
-        loadConfigOption(() -> blockFeatures = JsonUtils.getBool(root, "block_features", true, true));
-        loadConfigOption(() -> recipeFeatures = JsonUtils.getBool(root, "recipe_features", true, true));
-        loadConfigOption(() -> replaceItemIdentifiers = JsonUtils.getBool(root, "replace_item_identifiers", true, true));
-        loadConfigOption(() -> hideBackgroundTooltips = JsonUtils.getBool(root, "hide_background_tooltips", true, true));
+        loadConfigOption(() -> blockFeatures = JsonUtils.get(root, "block_features", true, true));
+        loadConfigOption(() -> recipeFeatures = JsonUtils.get(root, "recipe_features", true, true));
+        loadConfigOption(() -> replaceItemIdentifiers = JsonUtils.get(root, "replace_item_identifiers", true, true));
+        loadConfigOption(() -> hideBackgroundTooltips = JsonUtils.get(root, "hide_background_tooltips", true, true));
     }
 
     private static void loadConfigOption(Runnable runnable) {

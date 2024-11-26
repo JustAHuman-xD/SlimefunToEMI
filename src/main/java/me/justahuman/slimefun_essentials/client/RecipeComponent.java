@@ -13,21 +13,21 @@ import java.util.Arrays;
 import java.util.List;
 
 @Getter
-public class SlimefunRecipeComponent {
-    public static final SlimefunRecipeComponent EMPTY = new SlimefunRecipeComponent(new JsonArray(), "");
+public class RecipeComponent {
+    public static final RecipeComponent EMPTY = new RecipeComponent(new JsonArray(), "");
     private final List<ItemStack> complexStacks = new ArrayList<>();
     private final String id;
     private final List<String> multiId;
     
-    public SlimefunRecipeComponent(JsonArray complex, String id) {
+    public RecipeComponent(JsonArray complex, String id) {
         this(complex, id, null);
     }
     
-    public SlimefunRecipeComponent(JsonArray complex, List<String> multiId) {
+    public RecipeComponent(JsonArray complex, List<String> multiId) {
         this(complex, null, multiId);
     }
 
-    private SlimefunRecipeComponent(JsonArray complex, String id, List<String> multiId) {
+    private RecipeComponent(JsonArray complex, String id, List<String> multiId) {
         this.id = id;
         this.multiId = multiId;
         for (JsonElement element : complex) {
@@ -36,14 +36,27 @@ public class SlimefunRecipeComponent {
             }
         }
     }
+
+    public boolean isLarge() {
+        if (this.id != null) {
+            return id.startsWith("@") && !id.startsWith("baby_", 1);
+        } else if (this.multiId != null) {
+            for (String id : multiId) {
+                if (id.startsWith("@") && !id.startsWith("baby_", 1)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     
-    public static SlimefunRecipeComponent deserialize(JsonArray complex, JsonElement element) {
+    public static RecipeComponent deserialize(JsonArray complex, JsonElement element) {
         if (element instanceof JsonPrimitive primitive && primitive.isString()) {
             final String[] elements = primitive.getAsString().split(",");
             if (elements.length == 1) {
-                return new SlimefunRecipeComponent(complex, primitive.getAsString());
+                return new RecipeComponent(complex, primitive.getAsString());
             }
-            return new SlimefunRecipeComponent(complex, Arrays.asList(elements));
+            return new RecipeComponent(complex, Arrays.asList(elements));
         }
         return null;
     }

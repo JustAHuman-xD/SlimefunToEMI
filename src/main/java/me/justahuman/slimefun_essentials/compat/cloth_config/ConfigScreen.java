@@ -8,9 +8,6 @@ import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class ConfigScreen {
     public static Screen buildScreen(Screen parent) {
         final ConfigBuilder builder = ConfigBuilder.create()

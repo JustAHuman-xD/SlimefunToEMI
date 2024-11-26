@@ -8,31 +8,36 @@ import com.google.gson.JsonPrimitive;
 import com.mojang.serialization.DynamicOps;
 import me.justahuman.slimefun_essentials.SlimefunEssentials;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.component.ComponentChanges;
 import net.minecraft.component.ComponentMapImpl;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.StringNbtReader;
 import net.minecraft.registry.Registries;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class JsonUtils {
     private static final Gson GSON = new Gson().newBuilder().setPrettyPrinting().create();
 
-    public static JsonObject getObject(JsonObject parent, String key, JsonObject def) {
+    public static JsonObject get(JsonObject parent, String key, JsonObject def) {
         return parent.get(key) instanceof JsonObject json ? json : def;
     }
     
-    public static JsonArray getArray(JsonObject parent, String key, JsonArray def, boolean set) {
-        final JsonArray result = getArray(parent, key, def);
+    public static JsonArray get(JsonObject parent, String key, JsonArray def, boolean set) {
+        final JsonArray result = get(parent, key, def);
         if (set) {
             parent.add(key, result);
         }
         return result;
     }
     
-    public static JsonArray getArray(JsonObject parent, String key, JsonArray def) {
+    public static JsonArray get(JsonObject parent, String key, JsonArray def) {
         final JsonElement value = parent.get(key);
         if (value instanceof JsonArray array) {
             return array;
@@ -45,28 +50,39 @@ public class JsonUtils {
         return array;
     }
     
-    public static String getString(JsonObject parent, String key, String def) {
+    public static String get(JsonObject parent, String key, String def) {
         return parent.get(key) instanceof JsonPrimitive primitive && primitive.isString() ? primitive.getAsString() : def;
     }
     
-    public static Boolean getBool(JsonObject parent, String key, Boolean def, boolean set) {
-        final Boolean result = getBool(parent, key, def);
+    public static Boolean get(JsonObject parent, String key, Boolean def, boolean set) {
+        final Boolean result = get(parent, key, def);
         if (set) {
             parent.addProperty(key, result);
         }
         return result;
     }
     
-    public static Boolean getBool(JsonObject parent, String key, Boolean def) {
+    public static Boolean get(JsonObject parent, String key, Boolean def) {
         return parent.get(key) instanceof JsonPrimitive primitive && primitive.isBoolean() ? primitive.getAsBoolean() : def;
     }
     
-    public static Long getLong(JsonObject parent, String key, Long def) {
+    public static Long get(JsonObject parent, String key, Long def) {
         return parent.get(key) instanceof JsonPrimitive primitive && primitive.isNumber() ? primitive.getAsLong() : def;
     }
     
-    public static Integer getInt(JsonObject parent, String key, Integer def) {
+    public static Integer get(JsonObject parent, String key, Integer def) {
         return parent.get(key) instanceof JsonPrimitive primitive && primitive.isNumber() ? primitive.getAsInt() : def;
+    }
+
+    public static List<TooltipComponent> getTooltip(JsonObject json) {
+        final JsonArray tooltipArray = get(json, "tooltip", new JsonArray());
+        if (tooltipArray.isEmpty()) {
+            return List.of();
+        }
+
+        final List<TooltipComponent> tooltip = new ArrayList<>();
+        tooltipArray.forEach(element -> tooltip.add(TooltipComponent.of(Text.literal(element.getAsString()).asOrderedText())));
+        return tooltip;
     }
 
     public static JsonObject toJson(String string) {

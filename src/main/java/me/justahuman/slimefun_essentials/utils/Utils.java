@@ -1,15 +1,22 @@
 package me.justahuman.slimefun_essentials.utils;
 
 import me.justahuman.slimefun_essentials.SlimefunEssentials;
+import me.justahuman.slimefun_essentials.client.SlimefunRecipe;
 import me.justahuman.slimefun_essentials.client.SlimefunRegistry;
+import me.justahuman.slimefun_essentials.mixins.minecraft.TextTooltipAccessor;
+import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.component.ComponentChanges;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.NbtComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.text.OrderedText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
@@ -32,7 +39,7 @@ public class Utils {
 
         final String path = identifier.getPath();
         final String item = getFileName(path);
-        return SlimefunRegistry.getVanillaItems().contains(item);
+        return SlimefunRegistry.getVANILLA_ITEMS().contains(item);
     }
 
     public static String getFileName(String path) {
@@ -73,5 +80,36 @@ public class Utils {
             return null;
         }
         return pluginNbt.getString("slimefun:slimefun_guide_mode");
+    }
+
+    public static String fillPlaceholders(String string, SlimefunRecipe recipe) {
+        return string.replace("%time_seconds%", recipe.seconds().toString())
+                .replace("%time_ticks%", recipe.ticks().toString())
+                .replace("%time_millis%", recipe.millis().toString())
+                .replace("%energy%", recipe.energy().toString())
+                .replace("%total_energy%", recipe.totalEnergy().toString())
+                .replace("%inputs%", recipe.inputs().size() + "")
+                .replace("%outputs%", recipe.outputs().size() + "");
+    }
+
+    public static List<TooltipComponent> updateTooltip(List<TooltipComponent> tooltip, SlimefunRecipe recipe) {
+        if (tooltip.isEmpty()) {
+            return tooltip;
+        }
+
+        List<String> strings = tooltip.stream().map(component -> from(((TextTooltipAccessor) component).getText()))
+                .map(string -> fillPlaceholders(string, recipe)).toList();
+        List<TooltipComponent> newTooltip = new ArrayList<>();
+        strings.forEach(string -> newTooltip.add(TooltipComponent.of(Text.literal(string).asOrderedText())));
+        return newTooltip;
+    }
+
+    private static String from(OrderedText text) {
+        final StringBuilder builder = new StringBuilder();
+        text.accept((index, style, c) -> {
+            builder.appendCodePoint(c);
+            return true;
+        });
+        return builder.toString();
     }
 }

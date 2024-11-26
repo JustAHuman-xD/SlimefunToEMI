@@ -10,86 +10,56 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SlimefunRecipe {
-    protected SlimefunRecipeCategory parent;
-    protected Integer time;
+    protected RecipeCategory parent;
+    protected Integer sfTicks;
     protected Integer energy;
-    protected List<SlimefunRecipeComponent> inputs;
-    protected List<SlimefunRecipeComponent> outputs;
-    protected List<SlimefunLabel> labels;
+    protected List<RecipeComponent> inputs;
+    protected List<RecipeComponent> outputs;
+    protected List<RecipeDisplayComponent> labels;
 
-    public SlimefunRecipe(SlimefunRecipeCategory parent, Integer time, Integer energy, List<SlimefunRecipeComponent> inputs, List<SlimefunRecipeComponent> outputs, List<SlimefunLabel> labels) {
+    public SlimefunRecipe(RecipeCategory parent, Integer sfTicks, Integer energy, List<RecipeComponent> inputs, List<RecipeComponent> outputs, List<RecipeDisplayComponent> labels) {
         this.parent = parent;
-        this.time = time;
+        this.sfTicks = sfTicks;
         this.energy = energy;
         this.inputs = inputs;
         this.outputs = outputs;
         this.labels = labels;
     }
 
-    public static SlimefunRecipe deserialize(SlimefunRecipeCategory parent, JsonObject recipeObject, Integer workstationEnergy) {
-        final Integer time = JsonUtils.getInt(recipeObject, "time", null);
-        final Integer energy = JsonUtils.getInt(recipeObject, "energy", workstationEnergy);
-        final List<SlimefunRecipeComponent> inputs = new ArrayList<>();
-        final List<SlimefunRecipeComponent> outputs = new ArrayList<>();
-        final List<SlimefunLabel> labels = new ArrayList<>();
-        final JsonArray complex = JsonUtils.getArray(recipeObject, "complex", new JsonArray());
+    public static SlimefunRecipe deserialize(RecipeCategory parent, JsonObject recipeObject, Integer workstationEnergy) {
+        final Integer ticks = JsonUtils.get(recipeObject, "ticks", (Integer) null);
+        final Integer energy = JsonUtils.get(recipeObject, "energy", workstationEnergy);
+        final List<RecipeComponent> inputs = new ArrayList<>();
+        final List<RecipeComponent> outputs = new ArrayList<>();
+        final List<RecipeDisplayComponent> labels = new ArrayList<>();
+        final JsonArray complex = JsonUtils.get(recipeObject, "complex", new JsonArray());
 
-        for (JsonElement inputElement : JsonUtils.getArray(recipeObject, "inputs", new JsonArray())) {
-            final SlimefunRecipeComponent inputRecipeElement = SlimefunRecipeComponent.deserialize(complex, inputElement);
+        for (JsonElement inputElement : JsonUtils.get(recipeObject, "inputs", new JsonArray())) {
+            final RecipeComponent inputRecipeElement = RecipeComponent.deserialize(complex, inputElement);
             if (inputRecipeElement != null) {
                 inputs.add(inputRecipeElement);
             }
         }
 
-        for (JsonElement outputElement : JsonUtils.getArray(recipeObject, "outputs", new JsonArray())) {
-            final SlimefunRecipeComponent outputRecipeElement = SlimefunRecipeComponent.deserialize(complex, outputElement);
+        for (JsonElement outputElement : JsonUtils.get(recipeObject, "outputs", new JsonArray())) {
+            final RecipeComponent outputRecipeElement = RecipeComponent.deserialize(complex, outputElement);
             if (outputRecipeElement != null) {
                 outputs.add(outputRecipeElement);
             }
         }
 
-        for (JsonElement labelElement : JsonUtils.getArray(recipeObject, "labels", new JsonArray())) {
+        for (JsonElement labelElement : JsonUtils.get(recipeObject, "labels", new JsonArray())) {
             if (! (labelElement instanceof JsonPrimitive jsonPrimitive) || ! jsonPrimitive.isString()) {
                 continue;
             }
             
-            final SlimefunLabel slimefunLabel = SlimefunLabel.getSlimefunLabels().get(jsonPrimitive.getAsString());
-            if (slimefunLabel != null) {
-                labels.add(slimefunLabel);
+            final RecipeDisplayComponent recipeDisplayComponent = null;
+            if (recipeDisplayComponent != null) {
+                labels.add(recipeDisplayComponent);
             }
         }
 
-        return new SlimefunRecipe(parent, time, energy, inputs, outputs, labels);
-    }
-
-    public void fillInputs(int size) {
-        if (this.inputs == null) {
-            this.inputs = new ArrayList<>(size);
-            return;
-        }
-
-        if (this.inputs.size() >= size) {
-            return;
-        }
-
-        for (int i = this.inputs.size(); i < size; i++) {
-            inputs.add(SlimefunRecipeComponent.EMPTY);
-        }
-    }
-
-    public void fillOutputs(int size) {
-        if (this.outputs == null) {
-            this.outputs = new ArrayList<>(size);
-            return;
-        }
-
-        if (this.outputs.size() >= size) {
-            return;
-        }
-
-        for (int i = this.inputs.size(); i < size; i++) {
-            outputs.add(SlimefunRecipeComponent.EMPTY);
-        }
+        return new SlimefunRecipe(parent, ticks, energy, inputs, outputs, labels);
     }
 
     public boolean hasLabels() {
@@ -105,23 +75,31 @@ public class SlimefunRecipe {
     }
 
     public boolean hasTime() {
-        return this.time != null;
+        return this.sfTicks != null;
     }
 
     public boolean hasOutputs() {
         return this.outputs != null && !this.outputs.isEmpty();
     }
 
-    public SlimefunRecipeCategory parent() {
+    public RecipeCategory parent() {
         return this.parent;
     }
 
-    public Integer time() {
-        return this.time;
+    public Integer sfTicks() {
+        return hasTime() ? this.sfTicks / this.parent.speed() : 1;
     }
 
-    public Integer sfTicks() {
-        return hasTime() ? Math.max(1, time() / 10 / this.parent.speed()) : 1;
+    public Integer ticks() {
+        return seconds() * 20;
+    }
+
+    public Integer seconds() {
+        return sfTicks() * SlimefunRegistry.getTicksPerSecond();
+    }
+
+    public Integer millis() {
+        return seconds() * 1000;
     }
 
     public Integer energy() {
@@ -132,19 +110,19 @@ public class SlimefunRecipe {
         return this.hasEnergy() ? sfTicks() * this.energy : null;
     }
 
-    public List<SlimefunRecipeComponent> inputs() {
+    public List<RecipeComponent> inputs() {
         return this.inputs;
     }
 
-    public List<SlimefunRecipeComponent> outputs() {
+    public List<RecipeComponent> outputs() {
         return this.outputs;
     }
 
-    public List<SlimefunLabel> labels() {
+    public List<RecipeDisplayComponent> labels() {
         return this.labels;
     }
 
-    public SlimefunRecipe copy(SlimefunRecipeCategory newParent) {
-        return new SlimefunRecipe(newParent, this.time, this.energy, new ArrayList<>(this.inputs), new ArrayList<>(this.outputs), new ArrayList<>(this.labels));
+    public SlimefunRecipe copy(RecipeCategory newParent) {
+        return new SlimefunRecipe(newParent, this.sfTicks, this.energy, new ArrayList<>(this.inputs), new ArrayList<>(this.outputs), new ArrayList<>(this.labels));
     }
 }

@@ -5,8 +5,7 @@ import dev.emi.emi.api.stack.EmiStack;
 import me.justahuman.slimefun_essentials.SlimefunEssentials;
 import me.justahuman.slimefun_essentials.api.IdInterpreter;
 import me.justahuman.slimefun_essentials.client.SlimefunRecipe;
-import me.justahuman.slimefun_essentials.client.SlimefunRecipeComponent;
-import me.justahuman.slimefun_essentials.utils.Utils;
+import me.justahuman.slimefun_essentials.client.RecipeComponent;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
@@ -29,7 +28,7 @@ public class EmiIdInterpreter implements IdInterpreter<EmiIngredient> {
                 : new ArrayList<>();
     }
 
-    public EmiStack emiStackFromComponent(SlimefunRecipeComponent component) {
+    public EmiStack emiStackFromComponent(RecipeComponent component) {
         final EmiIngredient ingredient = emiIngredientFromComponent(component);
         if (ingredient instanceof EmiStack emiStack) {
             return emiStack;
@@ -39,7 +38,7 @@ public class EmiIdInterpreter implements IdInterpreter<EmiIngredient> {
         return EmiStack.EMPTY;
     }
 
-    public EmiIngredient emiIngredientFromComponent(SlimefunRecipeComponent component) {
+    public EmiIngredient emiIngredientFromComponent(RecipeComponent component) {
         final List<String> multiId = component.getMultiId();
         if (multiId != null) {
             final List<EmiIngredient> multiStack = new ArrayList<>();

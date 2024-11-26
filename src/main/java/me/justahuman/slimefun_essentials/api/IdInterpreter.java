@@ -2,7 +2,7 @@ package me.justahuman.slimefun_essentials.api;
 
 import me.justahuman.slimefun_essentials.SlimefunEssentials;
 import me.justahuman.slimefun_essentials.client.SlimefunRegistry;
-import me.justahuman.slimefun_essentials.client.SlimefunRecipeComponent;
+import me.justahuman.slimefun_essentials.client.RecipeComponent;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
@@ -13,7 +13,7 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 public interface IdInterpreter<T> {
-    default T interpretId(@NotNull SlimefunRecipeComponent component, @NotNull String id, @NotNull T def) {
+    default T interpretId(@NotNull RecipeComponent component, @NotNull String id, @NotNull T def) {
         if (id.isEmpty() || id.isBlank()) {
             return def;
         }
@@ -47,8 +47,8 @@ public interface IdInterpreter<T> {
         } catch (Exception ignored) {}
 
         // Slimefun Item
-        if (SlimefunRegistry.getSlimefunItems().containsKey(type)) {
-            final ItemStack itemStack = SlimefunRegistry.getSlimefunItems().get(type).copy().itemStack();
+        if (SlimefunRegistry.getSLIMEFUN_ITEMS().containsKey(type)) {
+            final ItemStack itemStack = SlimefunRegistry.getSLIMEFUN_ITEMS().get(type).copy().itemStack();
             if (damage > 0) {
                 itemStack.setDamage(damage);
             }

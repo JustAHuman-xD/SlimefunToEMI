@@ -5,7 +5,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import lombok.Getter;
 import lombok.NonNull;
+import lombok.Setter;
 import me.justahuman.slimefun_essentials.SlimefunEssentials;
 import me.justahuman.slimefun_essentials.utils.Utils;
 import net.minecraft.client.MinecraftClient;
@@ -27,14 +29,21 @@ import java.util.Map;
 import java.util.Set;
 
 public class SlimefunRegistry {
-    private static final Gson gson = new Gson().newBuilder().setPrettyPrinting().create();
-    private static final Map<String, SlimefunItemStack> slimefunItems = new LinkedHashMap<>();
-    private static final Set<String> vanillaItems = new HashSet<>();
+    private static final Gson GSON = new Gson().newBuilder().setPrettyPrinting().create();
+    private static final Map<String, SlimefunItemStack> SLIMEFUN_ITEMS = new LinkedHashMap<>();
+    private static final Set<String> VANILLA_ITEMS = new HashSet<>();
+    @Setter @Getter private static int ticksPerSecond = 2;
+
+    public static void reset() {
+        SLIMEFUN_ITEMS.clear();
+        VANILLA_ITEMS.clear();
+        ticksPerSecond = 2;
+    }
 
     public static JsonObject jsonObjectFromResource(Resource resource) {
         try {
             final InputStream inputStream = resource.getInputStream();
-            return gson.fromJson(new InputStreamReader(inputStream, StandardCharsets.UTF_8), JsonObject.class);
+            return GSON.fromJson(new InputStreamReader(inputStream, StandardCharsets.UTF_8), JsonObject.class);
         } catch(IOException e) {
             SlimefunEssentials.LOGGER.error("Failed to load resource", e);
             return new JsonObject();
@@ -43,8 +52,8 @@ public class SlimefunRegistry {
 
     public static void addItems(Map<String, ItemStack> items) {
         for (Map.Entry<String, ItemStack> entry : items.entrySet()) {
-            slimefunItems.put(entry.getKey(), new SlimefunItemStack(entry.getKey(), entry.getValue()));
-            vanillaItems.add(entry.getValue().getItem().toString());
+            SLIMEFUN_ITEMS.put(entry.getKey(), new SlimefunItemStack(entry.getKey(), entry.getValue()));
+            VANILLA_ITEMS.add(entry.getValue().getItem().toString());
         }
     }
 
@@ -88,22 +97,22 @@ public class SlimefunRegistry {
         final String id = modelId.substring(idStart == -1 ? 0 : idStart + 1,
                 idEnd == -1 ? modelId.length() : idEnd).toUpperCase(Locale.ROOT);
 
-        if (slimefunItems.containsKey(id)) {
-            slimefunItems.get(id.toUpperCase()).setCustomModelData(customModelData);
+        if (SLIMEFUN_ITEMS.containsKey(id)) {
+            SLIMEFUN_ITEMS.get(id.toUpperCase()).setCustomModelData(customModelData);
         }
     }
 
     public static SlimefunItemStack getSlimefunItem(String id) {
-        return slimefunItems.get(id);
+        return SLIMEFUN_ITEMS.get(id);
     }
 
     @NonNull
-    public static Map<String, SlimefunItemStack> getSlimefunItems() {
-        return Collections.unmodifiableMap(slimefunItems);
+    public static Map<String, SlimefunItemStack> getSLIMEFUN_ITEMS() {
+        return Collections.unmodifiableMap(SLIMEFUN_ITEMS);
     }
 
     @NonNull
-    public static Set<String> getVanillaItems() {
-        return Collections.unmodifiableSet(vanillaItems);
+    public static Set<String> getVANILLA_ITEMS() {
+        return Collections.unmodifiableSet(VANILLA_ITEMS);
     }
 }

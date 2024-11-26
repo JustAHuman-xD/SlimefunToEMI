@@ -2,6 +2,7 @@ package me.justahuman.slimefun_essentials.utils;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
+import me.justahuman.slimefun_essentials.client.payloads.ComponentTypePayload;
 import me.justahuman.slimefun_essentials.client.payloads.ItemGroupsPayload;
 import me.justahuman.slimefun_essentials.client.payloads.ItemsPayload;
 import me.justahuman.slimefun_essentials.client.payloads.RecipeCategoryPayload;
@@ -15,6 +16,7 @@ import java.util.function.Function;
 
 public class Payloads {
     public static final String PLUGIN_ID = "slimefun_server_essentials";
+    public static final CustomPayload.Id<ComponentTypePayload> COMPONENT_TYPE_CHANNEL = newChannel("component_types");
     public static final CustomPayload.Id<ItemsPayload> ITEM_CHANNEL = newChannel("items");
     public static final CustomPayload.Id<ItemGroupsPayload> ITEM_GROUPS_CHANNEL = newChannel("item_groups");
     public static final CustomPayload.Id<RecipeDisplayPayload> RECIPE_DISPLAY_CHANNEL = newChannel("recipe_displays");

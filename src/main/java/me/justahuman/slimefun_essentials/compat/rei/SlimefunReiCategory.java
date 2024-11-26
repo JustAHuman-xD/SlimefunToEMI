@@ -1,14 +1,11 @@
 package me.justahuman.slimefun_essentials.compat.rei;
 
-import me.justahuman.slimefun_essentials.api.OffsetBuilder;
-import me.justahuman.slimefun_essentials.api.SimpleRecipeRenderer;
-import me.justahuman.slimefun_essentials.client.DrawMode;
-import me.justahuman.slimefun_essentials.client.SlimefunRecipeCategory;
-import me.justahuman.slimefun_essentials.compat.rei.displays.SlimefunDisplay;
+import me.justahuman.slimefun_essentials.client.RecipeCategory;
+import me.justahuman.slimefun_essentials.client.RecipeDisplayComponent;
+import me.justahuman.slimefun_essentials.client.SlimefunRecipe;
 import me.justahuman.slimefun_essentials.utils.TextureUtils;
 import me.justahuman.slimefun_essentials.utils.Utils;
 import me.shedaniel.math.Rectangle;
-import me.shedaniel.rei.api.client.REIRuntime;
 import me.shedaniel.rei.api.client.gui.Renderer;
 import me.shedaniel.rei.api.client.gui.widgets.Widget;
 import me.shedaniel.rei.api.client.gui.widgets.Widgets;
@@ -22,31 +19,29 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SlimefunReiCategory<T extends SlimefunDisplay> extends SimpleRecipeRenderer implements DisplayCategory<T> {
-    protected final SlimefunRecipeCategory slimefunRecipeCategory;
+public class SlimefunReiCategory implements DisplayCategory<SlimefunDisplay> {
+    protected final RecipeCategory category;
     protected final ItemStack icon;
+    protected final int displayHeight;
 
-    public SlimefunReiCategory(SlimefunRecipeCategory slimefunRecipeCategory, ItemStack icon) {
-        super(Type.from(slimefunRecipeCategory.type()));
-
-        this.slimefunRecipeCategory = slimefunRecipeCategory;
+    public SlimefunReiCategory(RecipeCategory category, ItemStack icon) {
+        this.category = category;
         this.icon = icon;
+        int height = 0;
+        for (SlimefunRecipe recipe : category.childRecipes()) {
+            height = Math.max(height, category.display().height(recipe));
+        }
+        this.displayHeight = height + TextureUtils.REI_PADDING;
     }
 
     @Override
-    public DrawMode getDrawMode() {
-        return REIRuntime.getInstance().isDarkThemeEnabled() ? DrawMode.DARK : DrawMode.LIGHT;
-    }
-
-    @Override
-    @NotNull
-    public CategoryIdentifier<T> getCategoryIdentifier() {
-        return CategoryIdentifier.of(Utils.id(this.slimefunRecipeCategory.id().toLowerCase()));
+    public @NotNull CategoryIdentifier<SlimefunDisplay> getCategoryIdentifier() {
+        return CategoryIdentifier.of(Utils.id(this.category.id().toLowerCase()));
     }
 
     @NotNull
     public Text getTitle() {
-        return Text.translatable("slimefun_essentials.recipes.category.slimefun", this.icon.getName());
+        return this.icon.getName();
     }
 
     @NotNull
@@ -56,18 +51,23 @@ public class SlimefunReiCategory<T extends SlimefunDisplay> extends SimpleRecipe
 
     @Override
     public int getDisplayHeight() {
-        return getDisplayHeight(this.slimefunRecipeCategory) + TextureUtils.REI_PADDING;
+        return this.displayHeight;
     }
 
     @Override
-    public int getDisplayWidth(T display) {
-        return getDisplayWidth(display.slimefunRecipe()) + TextureUtils.REI_PADDING;
+    public int getDisplayWidth(SlimefunDisplay display) {
+        return this.category.display().width(display.slimefunRecipe()) + TextureUtils.REI_PADDING;
     }
 
     @Override
-    public List<Widget> setupDisplay(T display, Rectangle bounds) {
-        final int x = bounds.getMinX() + ((getDisplayWidth(display) - getContentsWidth(display.slimefunRecipe())) / 2);
-        final int y = bounds.getMinY() + ((getDisplayHeight() - getDisplayHeight(display.slimefunRecipe())) / 2);
-        return display.setupDisplay(new OffsetBuilder(display, display.slimefunRecipe(), x, y, y), new ArrayList<>(List.of(Widgets.createCategoryBase(bounds))), bounds, this.icon);
+    public List<Widget> setupDisplay(SlimefunDisplay display, Rectangle bounds) {
+        final int xOffset = bounds.getMinX();
+        final int yOffset = bounds.getMinY() + ((getDisplayHeight() - this.category.display().height(display.slimefunRecipe)) / 2);
+        List<Widget> widgets = new ArrayList<>();
+        widgets.add(Widgets.createCategoryBase(bounds));
+        for (RecipeDisplayComponent component : this.category.display().components(display.slimefunRecipe())) {
+            ReiIntegration.wrap(widgets, component, display.slimefunRecipe(), display.inputs, display.outputs, xOffset, yOffset);
+        }
+        return widgets;
     }
 }

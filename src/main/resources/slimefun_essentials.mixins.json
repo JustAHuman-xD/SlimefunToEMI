@@ -5,9 +5,11 @@
   "compatibilityLevel": "JAVA_17",
   "client": [
     "jei.InterpretersAccessor",
+    "minecraft.DrawContextInvoker",
     "minecraft.ItemStackMixin",
     "minecraft.OrbAccessor",
-    "minecraft.SlotMixin"
+    "minecraft.SlotMixin",
+    "minecraft.TextTooltipAccessor"
   ],
   "server": [],
   "injectors": {

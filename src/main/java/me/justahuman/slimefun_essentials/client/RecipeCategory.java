@@ -14,23 +14,22 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SlimefunRecipeCategory {
-    private static final Map<String, SlimefunRecipeCategory> recipeCategories = new LinkedHashMap<>();
-    private static final Map<String, SlimefunRecipeCategory> emptyCategories = new HashMap<>();
-    private static final Map<String, String> toCopy = new HashMap<>();
+public class RecipeCategory {
+    private static final Map<String, RecipeCategory> RECIPE_CATEGORIES = new LinkedHashMap<>();
+    private static final Map<String, RecipeCategory> EMPTY_CATEGORIES = new HashMap<>();
+    private static final Map<String, String> TO_COPY = new HashMap<>();
 
     private final String id;
     private final ItemStack itemStack;
-    private final String type;
     private final Integer speed;
     private final Integer energy;
     private final List<SlimefunRecipe> childRecipes;
     private SlimefunRecipe recipe = null;
+    private RecipeDisplay display = RecipeDisplay.NONE;
 
-    public SlimefunRecipeCategory(String id, ItemStack itemStack, String type, Integer speed, Integer energy, List<SlimefunRecipe> childRecipes) {
+    public RecipeCategory(String id, ItemStack itemStack, Integer speed, Integer energy, List<SlimefunRecipe> childRecipes) {
         this.id = id;
         this.itemStack = itemStack;
-        this.type = type;
         this.speed = speed;
         this.energy = energy;
         this.childRecipes = childRecipes;
@@ -40,12 +39,12 @@ public class SlimefunRecipeCategory {
         return this.id;
     }
 
-    public ItemStack itemStack() {
-        return this.itemStack;
+    public RecipeDisplay display() {
+        return this.display;
     }
 
-    public String type() {
-        return this.type;
+    public ItemStack itemStack() {
+        return this.itemStack;
     }
 
     public Integer speed() {
@@ -67,49 +66,48 @@ public class SlimefunRecipeCategory {
     public static void deserialize(String id, JsonObject categoryObject) {
         final ItemStack itemStack = SlimefunRegistry.getSlimefunItem(id) != null
                 ? SlimefunRegistry.getSlimefunItem(id).itemStack()
-                : JsonUtils.deserializeItem(JsonUtils.getObject(categoryObject, "item", new JsonObject()));
-        final String type = JsonUtils.getString(categoryObject, "type", "process");
-        final Integer speed = JsonUtils.getInt(categoryObject, "speed", null);
-        final Integer energy = JsonUtils.getInt(categoryObject, "energy", null);
+                : JsonUtils.deserializeItem(JsonUtils.get(categoryObject, "item", new JsonObject()));
+        final Integer speed = JsonUtils.get(categoryObject, "speed", (Integer) null);
+        final Integer energy = JsonUtils.get(categoryObject, "energy", (Integer) null);
         final List<SlimefunRecipe> recipes = new ArrayList<>();
 
-        final SlimefunRecipeCategory category = new SlimefunRecipeCategory(id, itemStack, type, speed, energy, recipes);
-        for (JsonElement recipeElement : JsonUtils.getArray(categoryObject, "recipes", new JsonArray())) {
+        final RecipeCategory category = new RecipeCategory(id, itemStack, speed, energy, recipes);
+        for (JsonElement recipeElement : JsonUtils.get(categoryObject, "recipes", new JsonArray())) {
             if (recipeElement instanceof JsonObject recipeObject) {
                 recipes.add(SlimefunRecipe.deserialize(category, recipeObject, energy));
             }
         }
 
-        toCopy.put(id, JsonUtils.getString(categoryObject, "copy", ""));
-        recipeCategories.put(id, category);
+        TO_COPY.put(id, JsonUtils.get(categoryObject, "copy", ""));
+        RECIPE_CATEGORIES.put(id, category);
     }
 
     public static void finalizeCategories() {
-        for (Map.Entry<String, String> copyMap : toCopy.entrySet()) {
-            final SlimefunRecipeCategory target = recipeCategories.get(copyMap.getKey());
-            final SlimefunRecipeCategory parent = recipeCategories.get(copyMap.getValue());
+        for (Map.Entry<String, String> copyMap : TO_COPY.entrySet()) {
+            final RecipeCategory target = RECIPE_CATEGORIES.get(copyMap.getKey());
+            final RecipeCategory parent = RECIPE_CATEGORIES.get(copyMap.getValue());
             if (target != null && parent != null) {
                 for (SlimefunRecipe slimefunRecipe : parent.childRecipes()) {
                     target.childRecipes().add(slimefunRecipe.copy(target));
                 }
             }
         }
-        toCopy.clear();
+        TO_COPY.clear();
 
-        for (SlimefunRecipeCategory category : recipeCategories.values()) {
+        for (RecipeCategory category : RECIPE_CATEGORIES.values()) {
             for (SlimefunRecipe recipe : category.childRecipes()) {
                 final int weight = weight(recipe);
-                for (SlimefunRecipeComponent output : recipe.outputs()) {
+                for (RecipeComponent output : recipe.outputs()) {
                     final List<String> multiId = output.getMultiId();
                     if (multiId != null) {
                         for (String id : multiId) {
-                            final SlimefunRecipeCategory forCategory = fromId(id);
+                            final RecipeCategory forCategory = fromId(id);
                             if (forCategory != null && weight >= weight(forCategory.recipe)) {
                                 forCategory.recipe = recipe;
                             }
                         }
                     } else {
-                        final SlimefunRecipeCategory forCategory = fromId(output.getId());
+                        final RecipeCategory forCategory = fromId(output.getId());
                         if (forCategory != null && weight >= weight(forCategory.recipe)) {
                             forCategory.recipe = recipe;
                         }
@@ -124,7 +122,7 @@ public class SlimefunRecipeCategory {
             return 0;
         }
 
-        final String type = recipe.parent().type();
+        final String type = recipe.parent().display().id;
         if (type.contains("grid")) {
             return 10;
         } else if (type.equals("ancient_altar")) {
@@ -138,7 +136,7 @@ public class SlimefunRecipeCategory {
         }
     }
 
-    public static SlimefunRecipeCategory fromId(String component) {
+    public static RecipeCategory fromId(String component) {
         if (!component.contains(":")) {
             return null;
         }
@@ -148,35 +146,35 @@ public class SlimefunRecipeCategory {
             id = id.substring(0, id.indexOf("%"));
         }
 
-        if (recipeCategories.containsKey(id)) {
-            return recipeCategories.get(id);
-        } else if (emptyCategories.containsKey(id)) {
-            return emptyCategories.get(id);
+        if (RECIPE_CATEGORIES.containsKey(id)) {
+            return RECIPE_CATEGORIES.get(id);
+        } else if (EMPTY_CATEGORIES.containsKey(id)) {
+            return EMPTY_CATEGORIES.get(id);
         } else if (SlimefunRegistry.getSlimefunItem(id) != null) {
             final SlimefunItemStack itemStack = SlimefunRegistry.getSlimefunItem(id);
-            final SlimefunRecipeCategory category = new SlimefunRecipeCategory(id, itemStack.itemStack(), "empty", null, null, new ArrayList<>());
-            emptyCategories.put(id, category);
+            final RecipeCategory category = new RecipeCategory(id, itemStack.itemStack(), null, null, new ArrayList<>());
+            EMPTY_CATEGORIES.put(id, category);
         }
         return null;
     }
     
     /**
-     * Returns an unmodifiable version of {@link SlimefunRecipeCategory#recipeCategories}
+     * Returns an unmodifiable version of {@link RecipeCategory#RECIPE_CATEGORIES}
      *
      * @return {@link Map}
      */
     @NonNull
-    public static Map<String, SlimefunRecipeCategory> getRecipeCategories() {
-        return Collections.unmodifiableMap(recipeCategories);
+    public static Map<String, RecipeCategory> getRecipeCategories() {
+        return Collections.unmodifiableMap(RECIPE_CATEGORIES);
     }
 
     public static void clear() {
-        recipeCategories.clear();
+        RECIPE_CATEGORIES.clear();
     }
 
-    public static Map<String, SlimefunRecipeCategory> getAllCategories() {
-        final Map<String, SlimefunRecipeCategory> categories = new HashMap<>(recipeCategories);
-        categories.putAll(emptyCategories);
+    public static Map<String, RecipeCategory> getAllCategories() {
+        final Map<String, RecipeCategory> categories = new HashMap<>(RECIPE_CATEGORIES);
+        categories.putAll(EMPTY_CATEGORIES);
         return categories;
     }
 }

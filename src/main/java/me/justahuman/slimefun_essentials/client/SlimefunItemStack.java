@@ -8,11 +8,6 @@ public record SlimefunItemStack(String id, ItemStack itemStack) {
     public void setCustomModelData(int customModelData) {
         itemStack.set(DataComponentTypes.CUSTOM_MODEL_DATA, new CustomModelDataComponent(customModelData));
     }
-
-    public SlimefunItemStack setAmount(int amount) {
-        itemStack.setCount(amount);
-        return this;
-    }
     
     public SlimefunItemStack copy() {
         return new SlimefunItemStack(id, itemStack.copy());

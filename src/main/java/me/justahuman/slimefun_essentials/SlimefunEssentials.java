@@ -1,6 +1,7 @@
 package me.justahuman.slimefun_essentials;
 
 import me.justahuman.slimefun_essentials.client.SlimefunRegistry;
+import me.justahuman.slimefun_essentials.client.payloads.ComponentTypePayload;
 import me.justahuman.slimefun_essentials.client.payloads.ItemGroupsPayload;
 import me.justahuman.slimefun_essentials.client.payloads.ItemsPayload;
 import me.justahuman.slimefun_essentials.client.payloads.RecipeCategoryPayload;
@@ -25,6 +26,7 @@ public class SlimefunEssentials implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        PayloadTypeRegistry.playS2C().register(Payloads.COMPONENT_TYPE_CHANNEL, ComponentTypePayload.CODEC);
         PayloadTypeRegistry.playS2C().register(Payloads.ITEM_CHANNEL, ItemsPayload.CODEC);
         PayloadTypeRegistry.playS2C().register(Payloads.ITEM_GROUPS_CHANNEL, ItemGroupsPayload.CODEC);
         PayloadTypeRegistry.playS2C().register(Payloads.RECIPE_CATEGORY_CHANNEL, RecipeCategoryPayload.CODEC);

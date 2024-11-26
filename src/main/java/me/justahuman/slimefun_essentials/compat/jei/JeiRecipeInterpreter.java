@@ -2,7 +2,7 @@ package me.justahuman.slimefun_essentials.compat.jei;
 
 import me.justahuman.slimefun_essentials.api.IdInterpreter;
 import me.justahuman.slimefun_essentials.client.SlimefunItemStack;
-import me.justahuman.slimefun_essentials.client.SlimefunRecipeComponent;
+import me.justahuman.slimefun_essentials.client.RecipeComponent;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
 import mezz.jei.fabric.ingredients.fluid.JeiFluidIngredient;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
@@ -21,7 +21,7 @@ public class JeiRecipeInterpreter implements IdInterpreter<Object> {
         slotBuilder.addItemStack(itemStack);
     }
 
-    public void addIngredients(IRecipeSlotBuilder slotBuilder, SlimefunRecipeComponent component) {
+    public void addIngredients(IRecipeSlotBuilder slotBuilder, RecipeComponent component) {
         for (String id : component.getMultiId() != null ? component.getMultiId() : List.of(component.getId())) {
             addIngredientObject(slotBuilder, interpretId(component, id, ItemStack.EMPTY));
         }
