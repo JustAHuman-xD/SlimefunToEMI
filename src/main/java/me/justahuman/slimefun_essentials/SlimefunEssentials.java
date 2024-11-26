@@ -26,8 +26,8 @@ public class SlimefunEssentials implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        PayloadTypeRegistry.playS2C().register(Payloads.COMPONENT_TYPE_CHANNEL, ComponentTypePayload.CODEC);
         PayloadTypeRegistry.playS2C().register(Payloads.ITEM_CHANNEL, ItemsPayload.CODEC);
+        PayloadTypeRegistry.playS2C().register(Payloads.COMPONENT_TYPE_CHANNEL, ComponentTypePayload.CODEC);
         PayloadTypeRegistry.playS2C().register(Payloads.ITEM_GROUPS_CHANNEL, ItemGroupsPayload.CODEC);
         PayloadTypeRegistry.playS2C().register(Payloads.RECIPE_CATEGORY_CHANNEL, RecipeCategoryPayload.CODEC);
         PayloadTypeRegistry.playS2C().register(Payloads.RECIPE_DISPLAY_CHANNEL, RecipeDisplayPayload.CODEC);
@@ -36,27 +36,12 @@ public class SlimefunEssentials implements ClientModInitializer {
         ClientPlayNetworking.registerGlobalReceiver(Payloads.ITEM_CHANNEL, (payload, context) -> {
             if (ModConfig.recipeFeatures() && payload != ItemsPayload.EMPTY) {
                 payload.load();
-                SlimefunRegistry.loadItemModels();
             }
         });
-
-        ClientPlayNetworking.registerGlobalReceiver(Payloads.ITEM_CHANNEL, (payload, context) -> {
-            if (ModConfig.recipeFeatures() && payload != ItemsPayload.EMPTY) {
-                payload.load();
-            }
-        });
-
-        ClientPlayNetworking.registerGlobalReceiver(Payloads.ITEM_CHANNEL, (payload, context) -> {
-            if (ModConfig.recipeFeatures() && payload != ItemsPayload.EMPTY) {
-                payload.load();
-            }
-        });
-
-        ClientPlayNetworking.registerGlobalReceiver(Payloads.ITEM_CHANNEL, (payload, context) -> {
-            if (ModConfig.recipeFeatures() && payload != ItemsPayload.EMPTY) {
-                payload.load();
-            }
-        });
+        ClientPlayNetworking.registerGlobalReceiver(Payloads.COMPONENT_TYPE_CHANNEL, (payload, context) -> {});
+        ClientPlayNetworking.registerGlobalReceiver(Payloads.ITEM_GROUPS_CHANNEL, (payload, context) -> {});
+        ClientPlayNetworking.registerGlobalReceiver(Payloads.RECIPE_CATEGORY_CHANNEL, (payload, context) -> {});
+        ClientPlayNetworking.registerGlobalReceiver(Payloads.RECIPE_DISPLAY_CHANNEL, (payload, context) -> {});
 
         if (CompatUtils.isClothConfigLoaded()) {
             final KeyBinding keyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding("slimefun_essentials.key_bind.open_config", GLFW.GLFW_KEY_F6, "slimefun_essentials.title"));
