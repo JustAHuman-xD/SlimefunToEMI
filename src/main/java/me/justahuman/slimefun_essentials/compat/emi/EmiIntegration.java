@@ -14,6 +14,7 @@ import me.justahuman.slimefun_essentials.client.SlimefunItemGroup;
 import me.justahuman.slimefun_essentials.client.SlimefunItemStack;
 import me.justahuman.slimefun_essentials.client.RecipeCategory;
 import me.justahuman.slimefun_essentials.client.SlimefunRecipe;
+import me.justahuman.slimefun_essentials.utils.Payloads;
 import me.justahuman.slimefun_essentials.utils.Utils;
 import net.minecraft.util.Identifier;
 
@@ -46,7 +47,7 @@ public class EmiIntegration implements EmiPlugin {
                 emiRegistry.addCategory(slimefunEmiCategory);
                 emiRegistry.addWorkstation(slimefunEmiCategory, workStation);
             }
-            
+
             for (SlimefunRecipe slimefunRecipe : recipeCategory.childRecipes()) {
                 emiRegistry.addRecipe(new SlimefunEmiRecipe(recipeCategory, slimefunRecipe, slimefunEmiCategory));
             }

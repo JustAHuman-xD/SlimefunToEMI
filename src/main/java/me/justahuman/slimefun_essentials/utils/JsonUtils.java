@@ -105,11 +105,11 @@ public class JsonUtils {
     }
     
     public static ItemStack deserializeItem(JsonObject json) {
-        if (json == null || json.isEmpty() || !json.has("item")) {
+        if (json == null || json.isEmpty() || !json.has("id")) {
             return ItemStack.EMPTY;
         }
 
-        final ItemStack itemStack = new ItemStack(Registries.ITEM.get(Identifier.tryParse(json.get("item").getAsString())));
+        final ItemStack itemStack = new ItemStack(Registries.ITEM.get(Identifier.tryParse(json.get("id").getAsString())));
         itemStack.setCount(JsonHelper.getInt(json, "amount", 1));
 
         try {

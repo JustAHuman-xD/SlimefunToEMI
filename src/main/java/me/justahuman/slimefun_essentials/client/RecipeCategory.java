@@ -25,7 +25,7 @@ public class RecipeCategory {
     private final Integer energy;
     private final List<SlimefunRecipe> childRecipes;
     private SlimefunRecipe recipe = null;
-    private RecipeDisplay display = RecipeDisplay.NONE;
+    private String display = "dynamic";
 
     public RecipeCategory(String id, ItemStack itemStack, Integer speed, Integer energy, List<SlimefunRecipe> childRecipes) {
         this.id = id;
@@ -40,7 +40,7 @@ public class RecipeCategory {
     }
 
     public RecipeDisplay display() {
-        return this.display;
+        return RecipeDisplay.get(this.display);
     }
 
     public ItemStack itemStack() {

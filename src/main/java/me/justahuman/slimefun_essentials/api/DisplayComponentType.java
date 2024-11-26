@@ -52,8 +52,8 @@ public interface DisplayComponentType {
             CustomRenderable lightFill = CustomRenderable.deserialize(type.getAsJsonObject("light_fill"));
             CustomRenderable darkFill = CustomRenderable.deserialize(type.getAsJsonObject("dark_fill"));
             boolean horizontal = type.get("horizontal").getAsBoolean();
-            RecipeCondition emptyToFull = RecipeCondition.deserialize(type.getAsJsonObject("empty_to_full"));
-            RecipeCondition startToEnd = RecipeCondition.deserialize(type.getAsJsonObject("start_to_end"));
+            RecipeCondition emptyToFull = RecipeCondition.deserialize(type.get("empty_to_full"));
+            RecipeCondition startToEnd = RecipeCondition.deserialize(type.get("start_to_end"));
             String timeToFill = type.get("time_to_fill").getAsString();
             if (timeToFill.equals(FillingComponentType.RECIPE_TIME)) {
                 COMPONENT_TYPES.put(id, new FillingComponentType(light, lightFill, dark, darkFill, horizontal, SlimefunRecipe::millis, emptyToFull, startToEnd));

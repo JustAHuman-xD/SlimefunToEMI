@@ -26,7 +26,7 @@ public interface CustomRenderable {
             return new ConditionalRenderable(
                     deserialize(jsonObject.getAsJsonObject("passed")),
                     deserialize(jsonObject.getAsJsonObject("failed")),
-                    RecipeCondition.deserialize(jsonObject.getAsJsonObject("condition"))
+                    RecipeCondition.deserialize(jsonObject.get("condition"))
             );
         } else {
             return SimpleRenderable.deserialize(jsonObject);

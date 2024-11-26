@@ -53,7 +53,7 @@ public class RecipeDisplay {
     }
 
     public static RecipeDisplay get(String id) {
-        return RECIPE_DISPLAYS.getOrDefault(id, NONE);
+        return id.equals("dynamic") ? DYNAMIC : RECIPE_DISPLAYS.getOrDefault(id, NONE);
     }
 
     public static void clear() {

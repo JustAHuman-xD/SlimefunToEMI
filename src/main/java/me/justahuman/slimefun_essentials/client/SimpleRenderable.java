@@ -15,8 +15,8 @@ public record SimpleRenderable(Identifier identifier, int width, int height, int
             Identifier.tryParse(JsonUtils.get(json, "identifier", TextureUtils.WIDGETS.toString())),
             json.get("width").getAsInt(),
             json.get("height").getAsInt(),
-            json.get("u").getAsInt(),
-            json.get("v").getAsInt(),
+            JsonUtils.get(json, "u", 0),
+            JsonUtils.get(json, "v", 0),
             JsonUtils.get(json, "texture_width", 256),
             JsonUtils.get(json, "texture_height", 256),
             JsonUtils.getTooltip(json)

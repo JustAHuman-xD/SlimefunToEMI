@@ -2,9 +2,11 @@ package me.justahuman.slimefun_essentials.utils;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
+import me.justahuman.slimefun_essentials.SlimefunEssentials;
 import me.justahuman.slimefun_essentials.client.payloads.ComponentTypePayload;
 import me.justahuman.slimefun_essentials.client.payloads.ItemGroupsPayload;
 import me.justahuman.slimefun_essentials.client.payloads.ItemsPayload;
+import me.justahuman.slimefun_essentials.client.payloads.LoadingStatePayload;
 import me.justahuman.slimefun_essentials.client.payloads.RecipeCategoryPayload;
 import me.justahuman.slimefun_essentials.client.payloads.RecipeDisplayPayload;
 import net.minecraft.network.PacketByteBuf;
@@ -23,9 +25,34 @@ public class Payloads {
     public static final CustomPayload.Id<ItemGroupsPayload> ITEM_GROUPS_CHANNEL = newChannel("item_groups");
     public static final CustomPayload.Id<RecipeDisplayPayload> RECIPE_DISPLAY_CHANNEL = newChannel("recipe_displays");
     public static final CustomPayload.Id<RecipeCategoryPayload> RECIPE_CATEGORY_CHANNEL = newChannel("recipe_categories");
+    public static final CustomPayload.Id<LoadingStatePayload> LOADING_STATE_CHANNEL = newChannel("loading_state");
 
     private static final int MAX_MESSAGE_SIZE = 32766;
     private static final int SPLIT_MESSAGE_SIZE = MAX_MESSAGE_SIZE - 4 - 4 - 4;
+    private static final Map<Class<?>, Integer> PACKET_COUNTS = new HashMap<>();
+    private static final Map<Class<?>, Integer> EXPECTED_PACKETS = new HashMap<>();
+
+    public static void expect(LoadingStatePayload payload) {
+        EXPECTED_PACKETS.clear();
+        EXPECTED_PACKETS.put(ComponentTypePayload.class, payload.typePackets());
+        EXPECTED_PACKETS.put(ItemsPayload.class, payload.itemPackets());
+        EXPECTED_PACKETS.put(RecipeCategoryPayload.class, payload.categoryPackets());
+        EXPECTED_PACKETS.put(RecipeDisplayPayload.class, payload.displayPackets());
+        if (passedExpected()) {
+            SlimefunEssentials.LOGGER.info("Received every expected packet!!");
+        }
+    }
+
+    private static boolean passedExpected() {
+        for (Map.Entry<Class<?>, Integer> expected : EXPECTED_PACKETS.entrySet()) {
+            if (PACKET_COUNTS.getOrDefault(expected.getKey(), 0) < expected.getValue()) {
+                return false;
+            } else if (PACKET_COUNTS.getOrDefault(expected.getKey(), 0) > expected.getValue()) {
+                SlimefunEssentials.LOGGER.warn("Received more packets than expected for " + expected.getKey().getSimpleName());
+            }
+        }
+        return !EXPECTED_PACKETS.isEmpty();
+    }
 
     public static <P extends CustomPayload> CustomPayload.Id<P> newChannel(String channel) {
         return new CustomPayload.Id<>(Identifier.of(PLUGIN_ID, channel));
@@ -40,6 +67,12 @@ public class Payloads {
 
             @Override
             public P decode(PacketByteBuf buf) {
+                PACKET_COUNTS.compute(empty.getClass(), (k, v) -> v == null ? 1 : v + 1);
+
+                if (passedExpected()) {
+                    SlimefunEssentials.LOGGER.info("Received every expected packet!!");
+                }
+
                 byte[] bytes = new byte[buf.readableBytes()];
                 for (int i = 0; i < bytes.length; i++) {
                     bytes[i] = buf.readByte();

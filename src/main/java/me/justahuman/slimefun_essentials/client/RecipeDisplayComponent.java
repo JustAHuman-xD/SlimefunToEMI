@@ -61,6 +61,10 @@ public record RecipeDisplayComponent(String type, int x, int y, int index, boole
         int y = jsonObject.get("y").getAsInt();
         int index = JsonUtils.get(jsonObject, "index", -1);
         boolean output = JsonUtils.get(jsonObject, "output", false);
+        if (!jsonObject.has("tooltip")) {
+            return new RecipeDisplayComponent(type, x, y, index, output);
+        }
+
         JsonArray tooltipArray = jsonObject.getAsJsonArray("tooltip");
         List<String> tooltip = new ArrayList<>();
         tooltipArray.forEach(element -> tooltip.add(element.getAsString()));

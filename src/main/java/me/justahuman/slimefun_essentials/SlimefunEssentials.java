@@ -4,6 +4,7 @@ import me.justahuman.slimefun_essentials.client.SlimefunRegistry;
 import me.justahuman.slimefun_essentials.client.payloads.ComponentTypePayload;
 import me.justahuman.slimefun_essentials.client.payloads.ItemGroupsPayload;
 import me.justahuman.slimefun_essentials.client.payloads.ItemsPayload;
+import me.justahuman.slimefun_essentials.client.payloads.LoadingStatePayload;
 import me.justahuman.slimefun_essentials.client.payloads.RecipeCategoryPayload;
 import me.justahuman.slimefun_essentials.client.payloads.RecipeDisplayPayload;
 import me.justahuman.slimefun_essentials.compat.cloth_config.ConfigScreen;
@@ -26,6 +27,7 @@ public class SlimefunEssentials implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        PayloadTypeRegistry.playS2C().register(Payloads.LOADING_STATE_CHANNEL, LoadingStatePayload.CODEC);
         PayloadTypeRegistry.playS2C().register(Payloads.ITEM_CHANNEL, ItemsPayload.CODEC);
         PayloadTypeRegistry.playS2C().register(Payloads.COMPONENT_TYPE_CHANNEL, ComponentTypePayload.CODEC);
         PayloadTypeRegistry.playS2C().register(Payloads.ITEM_GROUPS_CHANNEL, ItemGroupsPayload.CODEC);
@@ -33,6 +35,9 @@ public class SlimefunEssentials implements ClientModInitializer {
         PayloadTypeRegistry.playS2C().register(Payloads.RECIPE_DISPLAY_CHANNEL, RecipeDisplayPayload.CODEC);
         ModConfig.loadConfig();
 
+        ClientPlayNetworking.registerGlobalReceiver(Payloads.LOADING_STATE_CHANNEL, (payload, context) -> {
+            Payloads.expect(payload);
+        });
         ClientPlayNetworking.registerGlobalReceiver(Payloads.ITEM_CHANNEL, (payload, context) -> {
             if (ModConfig.recipeFeatures() && payload != ItemsPayload.EMPTY) {
                 payload.load();
