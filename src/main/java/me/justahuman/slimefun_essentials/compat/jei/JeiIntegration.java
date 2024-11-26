@@ -49,7 +49,7 @@ public class JeiIntegration implements IModPlugin {
         }
 
         registration.getIngredientManager().addIngredientsAtRuntime(VanillaTypes.ITEM_STACK,
-                SlimefunItemGroup.sort(List.copyOf(SlimefunRegistry.getSLIMEFUN_ITEMS().values())).stream().map(SlimefunItemStack::itemStack).toList());
+                SlimefunItemGroup.sort(List.copyOf(SlimefunRegistry.getSlimefunItems().values())).stream().map(SlimefunItemStack::itemStack).toList());
     }
 
     @Override
@@ -60,7 +60,7 @@ public class JeiIntegration implements IModPlugin {
 
         SubtypeInterpreters interpreters = registration.getInterpreters();
         Set<Item> wrappedItems = new HashSet<>();
-        for (SlimefunItemStack slimefunItemStack : SlimefunRegistry.getSLIMEFUN_ITEMS().values()) {
+        for (SlimefunItemStack slimefunItemStack : SlimefunRegistry.getSlimefunItems().values()) {
             ItemStack itemStack = slimefunItemStack.itemStack();
             Item item = itemStack.getItem();
             if (!wrappedItems.add(item)) {

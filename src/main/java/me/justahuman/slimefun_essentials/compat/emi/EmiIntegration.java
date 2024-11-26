@@ -28,7 +28,7 @@ public class EmiIntegration implements EmiPlugin {
     
     @Override
     public void register(EmiRegistry emiRegistry) {
-        for (SlimefunItemStack slimefunItemStack : SlimefunRegistry.getSLIMEFUN_ITEMS().values()) {
+        for (SlimefunItemStack slimefunItemStack : SlimefunRegistry.getSlimefunItems().values()) {
             emiRegistry.setDefaultComparison(EmiStack.of(slimefunItemStack.itemStack()), SLIMEFUN_ID);
         }
         CATEGORIES.clear();
@@ -52,7 +52,7 @@ public class EmiIntegration implements EmiPlugin {
             }
         }
 
-        for (SlimefunItemStack slimefunItemStack : SlimefunItemGroup.sort(List.copyOf(SlimefunRegistry.getSLIMEFUN_ITEMS().values()))) {
+        for (SlimefunItemStack slimefunItemStack : SlimefunItemGroup.sort(List.copyOf(SlimefunRegistry.getSlimefunItems().values()))) {
             emiRegistry.addEmiStack(EmiStack.of(slimefunItemStack.itemStack()));
         }
     }

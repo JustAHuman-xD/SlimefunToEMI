@@ -107,12 +107,12 @@ public class SlimefunRegistry {
     }
 
     @NonNull
-    public static Map<String, SlimefunItemStack> getSLIMEFUN_ITEMS() {
+    public static Map<String, SlimefunItemStack> getSlimefunItems() {
         return Collections.unmodifiableMap(SLIMEFUN_ITEMS);
     }
 
     @NonNull
-    public static Set<String> getVANILLA_ITEMS() {
+    public static Set<String> getVanillaItems() {
         return Collections.unmodifiableSet(VANILLA_ITEMS);
     }
 }

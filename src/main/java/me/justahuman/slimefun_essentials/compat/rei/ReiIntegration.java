@@ -39,7 +39,7 @@ public class ReiIntegration implements REIClientPlugin {
 
     @Override
     public void registerEntries(EntryRegistry registry) {
-        for (SlimefunItemStack slimefunItemStack : SlimefunItemGroup.sort(List.copyOf(SlimefunRegistry.getSLIMEFUN_ITEMS().values()))) {
+        for (SlimefunItemStack slimefunItemStack : SlimefunItemGroup.sort(List.copyOf(SlimefunRegistry.getSlimefunItems().values()))) {
             registry.addEntry(EntryStacks.of(slimefunItemStack.itemStack()));
         }
     }

@@ -145,7 +145,7 @@ public class RecipeDisplay {
                 }
 
                 if (recipe.hasInputs()) {
-                    int i = 0;
+                    int i = 1;
                     for (RecipeComponent component : recipe.inputs()) {
                         DisplayComponentType type = DisplayComponentType.get(component.isLarge() ? "large_slot" : "slot");
                         components.add(new RecipeDisplayComponent(component.isLarge() ? "large_slot" : "slot", x, centered(type, height), i));
@@ -166,7 +166,7 @@ public class RecipeDisplay {
                 }
 
                 if (recipe.hasOutputs()) {
-                    int i = 0;
+                    int i = 1;
                     for (RecipeComponent component : recipe.outputs()) {
                         DisplayComponentType type = DisplayComponentType.get(component.isLarge() ? "large_slot" : "slot");
                         components.add(new RecipeDisplayComponent(component.isLarge() ? "large_slot" : "slot", x, centered(type, height), i, true));

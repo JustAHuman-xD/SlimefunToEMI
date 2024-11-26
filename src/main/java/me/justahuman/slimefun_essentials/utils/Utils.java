@@ -39,7 +39,7 @@ public class Utils {
 
         final String path = identifier.getPath();
         final String item = getFileName(path);
-        return SlimefunRegistry.getVANILLA_ITEMS().contains(item);
+        return SlimefunRegistry.getVanillaItems().contains(item);
     }
 
     public static String getFileName(String path) {

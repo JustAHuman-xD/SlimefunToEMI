@@ -12,6 +12,8 @@ import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.util.Identifier;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 public class Payloads {
@@ -22,14 +24,16 @@ public class Payloads {
     public static final CustomPayload.Id<RecipeDisplayPayload> RECIPE_DISPLAY_CHANNEL = newChannel("recipe_displays");
     public static final CustomPayload.Id<RecipeCategoryPayload> RECIPE_CATEGORY_CHANNEL = newChannel("recipe_categories");
 
+    private static final int MAX_MESSAGE_SIZE = 32766;
+    private static final int SPLIT_MESSAGE_SIZE = MAX_MESSAGE_SIZE - 4 - 4 - 4;
+
     public static <P extends CustomPayload> CustomPayload.Id<P> newChannel(String channel) {
         return new CustomPayload.Id<>(Identifier.of(PLUGIN_ID, channel));
     }
 
     public static <P extends CustomPayload>PacketCodec<PacketByteBuf, P> newSplitCodec(Function<ByteArrayDataInput, P> decoder, P empty) {
         return new PacketCodec<>() {
-            private int piecesLeft = 0;
-            private byte[] previous = null;
+            private final Map<Integer, byte[][]> received = new HashMap<>();
 
             @Override
             public void encode(PacketByteBuf buf, P value) {}
@@ -41,33 +45,31 @@ public class Payloads {
                     bytes[i] = buf.readByte();
                 }
 
-                if (piecesLeft > 0) {
-                    byte[] temp = new byte[previous.length + bytes.length];
-                    System.arraycopy(previous, 0, temp, 0, previous.length);
-                    System.arraycopy(bytes, 0, temp, previous.length, bytes.length);
-                    bytes = temp;
-                    piecesLeft--;
+                int id = bytes[0] << 24 | bytes[1] << 16 | bytes[2] << 8 | bytes[3];
+                int pieces = bytes[4] << 24 | bytes[5] << 16 | bytes[6] << 8 | bytes[7];
+                int piece = bytes[8] << 24 | bytes[9] << 16 | bytes[10] << 8 | bytes[11];
+                byte[] pieceBytes = new byte[bytes.length - 12];
+                System.arraycopy(bytes, 12, pieceBytes, 0, pieceBytes.length);
+                byte[][] piecesBytes = received.computeIfAbsent(id, k -> new byte[pieces][]);
+                piecesBytes[piece] = pieceBytes;
 
-                    if (piecesLeft > 0) {
-                        previous = bytes;
-                        return empty;
-                    } else {
-                        previous = null;
-                        return decoder.apply(ByteStreams.newDataInput(bytes));
+                boolean complete = true;
+                for (byte[] totalMessagePiece : piecesBytes) {
+                    if (totalMessagePiece == null) {
+                        complete = false;
+                        break;
                     }
                 }
 
-                int pieces = bytes[0] << 24 | bytes[1] << 16 | bytes[2] << 8 | bytes[3];
-                byte[] temp = new byte[bytes.length - 4];
-                System.arraycopy(bytes, 4, temp, 0, bytes.length - 4);
-                bytes = temp;
-
-                if (pieces > 1) {
-                    piecesLeft = pieces - 1;
-                    previous = bytes;
-                    return empty;
+                if (complete) {
+                    byte[] totalBytes = new byte[pieces * SPLIT_MESSAGE_SIZE];
+                    for (int i = 0; i < pieces; i++) {
+                        System.arraycopy(piecesBytes[i], 0, totalBytes, i * SPLIT_MESSAGE_SIZE, piecesBytes[i].length);
+                    }
+                    received.remove(id);
+                    return decoder.apply(ByteStreams.newDataInput(totalBytes));
                 }
-                return decoder.apply(ByteStreams.newDataInput(bytes));
+                return empty;
             }
         };
     }

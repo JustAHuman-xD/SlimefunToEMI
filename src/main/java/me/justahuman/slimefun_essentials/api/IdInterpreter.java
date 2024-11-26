@@ -47,8 +47,8 @@ public interface IdInterpreter<T> {
         } catch (Exception ignored) {}
 
         // Slimefun Item
-        if (SlimefunRegistry.getSLIMEFUN_ITEMS().containsKey(type)) {
-            final ItemStack itemStack = SlimefunRegistry.getSLIMEFUN_ITEMS().get(type).copy().itemStack();
+        if (SlimefunRegistry.getSlimefunItems().containsKey(type)) {
+            final ItemStack itemStack = SlimefunRegistry.getSlimefunItems().get(type).copy().itemStack();
             if (damage > 0) {
                 itemStack.setDamage(damage);
             }
