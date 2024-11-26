@@ -8,7 +8,7 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.packet.CustomPayload;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public record ItemsPayload(Map<String, ItemStack> items) implements CustomPayload {
@@ -16,7 +16,7 @@ public record ItemsPayload(Map<String, ItemStack> items) implements CustomPayloa
     public static final PacketCodec<PacketByteBuf, ItemsPayload> CODEC =
             Payloads.newSplitCodec(input -> {
                 int size = input.readInt();
-                Map<String, ItemStack> items = new HashMap<>(size);
+                Map<String, ItemStack> items = new LinkedHashMap<>(size);
                 for (int i = 0; i < size; i++) {
                     items.put(input.readUTF(), JsonUtils.deserializeItem(input.readUTF()));
                 }

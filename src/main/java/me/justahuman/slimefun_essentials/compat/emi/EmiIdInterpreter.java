@@ -45,7 +45,7 @@ public class EmiIdInterpreter implements IdInterpreter<EmiIngredient> {
             for (String id : multiId) {
                 multiStack.add(interpretId(component, id, EmiStack.EMPTY));
             }
-            return EmiIngredient.of(multiStack, multiStack.isEmpty() ? 1 : multiStack.get(0).getAmount());
+            return EmiIngredient.of(multiStack, multiStack.isEmpty() ? 1 : multiStack.getFirst().getAmount());
         }
 
         return interpretId(component, component.getId(), EmiStack.EMPTY);

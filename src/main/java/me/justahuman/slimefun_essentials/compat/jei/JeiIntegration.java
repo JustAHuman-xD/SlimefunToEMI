@@ -2,11 +2,11 @@ package me.justahuman.slimefun_essentials.compat.jei;
 
 import me.justahuman.slimefun_essentials.SlimefunEssentials;
 import me.justahuman.slimefun_essentials.client.SlimefunRegistry;
-import me.justahuman.slimefun_essentials.client.SlimefunItemGroup;
 import me.justahuman.slimefun_essentials.client.SlimefunItemStack;
 import me.justahuman.slimefun_essentials.client.SlimefunRecipe;
 import me.justahuman.slimefun_essentials.client.RecipeCategory;
 import me.justahuman.slimefun_essentials.mixins.jei.InterpretersAccessor;
+import me.justahuman.slimefun_essentials.utils.Payloads;
 import me.justahuman.slimefun_essentials.utils.Utils;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
@@ -28,7 +28,6 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @JeiPlugin
@@ -49,7 +48,7 @@ public class JeiIntegration implements IModPlugin {
         }
 
         registration.getIngredientManager().addIngredientsAtRuntime(VanillaTypes.ITEM_STACK,
-                SlimefunItemGroup.sort(List.copyOf(SlimefunRegistry.getSlimefunItems().values())).stream().map(SlimefunItemStack::itemStack).toList());
+                SlimefunRegistry.getSlimefunItems().values().stream().map(SlimefunItemStack::itemStack).toList());
     }
 
     @Override
@@ -93,6 +92,9 @@ public class JeiIntegration implements IModPlugin {
 
     @Override
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
+        if (!Payloads.metExpected()) {
+            return;
+        }
         for (RecipeCategory recipeCategory : RecipeCategory.getRecipeCategories().values()) {
             registration.addRecipeCatalyst(recipeCategory.itemStack(), RecipeType.create(SlimefunEssentials.MOD_ID, recipeCategory.id().toLowerCase(), SlimefunRecipe.class));
         }

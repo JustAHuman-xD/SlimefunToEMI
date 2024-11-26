@@ -55,7 +55,7 @@ public class FillingComponentType implements DisplayComponentType {
     }
 
     @Override
-    public void draw(SlimefunRecipe recipe, DrawMode mode, DrawContext context, int x, int y, int mouseX, int mouseY, List<TooltipComponent> tooltip) {
+    public void draw(SlimefunRecipe recipe, DrawMode mode, DrawContext context, int x, int y) {
         int time = this.timeToFill.apply(recipe);
         int subTime = time <= 0 ? 0 : (int) (System.currentTimeMillis() % time);
         boolean emptyToFull = this.emptyToFull.passes(recipe);
@@ -64,7 +64,7 @@ public class FillingComponentType implements DisplayComponentType {
             subTime = time - subTime;
         }
 
-        draw(recipe, mode == DrawMode.LIGHT ? light : dark, context, x, y, mouseX, mouseY, tooltip);
+        draw(recipe, mode == DrawMode.LIGHT ? light : dark, context, x, y);
 
         CustomRenderable fill = mode == DrawMode.LIGHT ? lightFill : darkFill;
         fill.update(recipe);
@@ -109,6 +109,6 @@ public class FillingComponentType implements DisplayComponentType {
             }
         }
 
-        draw(recipe, context, fill.identifier(), List.of(), mx, my, mouseX, mouseY, mw, mh, mu, mv, mrw, mrh, fill.textureWidth(), fill.textureHeight());
+        draw(recipe, context, fill.identifier(), mx, my, mw, mh, mu, mv, mrw, mrh, fill.textureWidth(), fill.textureHeight());
     }
 }

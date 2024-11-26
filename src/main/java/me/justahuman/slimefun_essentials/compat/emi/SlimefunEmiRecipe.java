@@ -4,10 +4,16 @@ import dev.emi.emi.api.recipe.EmiRecipe;
 import dev.emi.emi.api.recipe.EmiRecipeCategory;
 import dev.emi.emi.api.stack.EmiIngredient;
 import dev.emi.emi.api.stack.EmiStack;
+import dev.emi.emi.api.widget.Bounds;
+import dev.emi.emi.api.widget.Widget;
 import dev.emi.emi.api.widget.WidgetHolder;
+import me.justahuman.slimefun_essentials.api.DisplayComponentType;
+import me.justahuman.slimefun_essentials.client.DrawMode;
 import me.justahuman.slimefun_essentials.client.RecipeCategory;
 import me.justahuman.slimefun_essentials.client.RecipeDisplayComponent;
 import me.justahuman.slimefun_essentials.client.SlimefunRecipe;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
@@ -62,7 +68,43 @@ public class SlimefunEmiRecipe implements EmiRecipe {
     @Override
     public void addWidgets(WidgetHolder widgets) {
         for (RecipeDisplayComponent component : category.display().components(recipe)) {
-            EmiIntegration.wrap(this, widgets, component, recipe, inputs, outputs);
+            int x = component.x();
+            int y = component.y();
+
+            widgets.add(new Widget() {
+                private final Bounds bounds = new Bounds(x, y, component.width(), component.height());
+                private final List<TooltipComponent> tooltip = component.tooltip(DrawMode.LIGHT, recipe);
+
+                @Override
+                public Bounds getBounds() {
+                    return bounds;
+                }
+
+                @Override
+                public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+                    component.draw(recipe, DrawMode.LIGHT, context, bounds.x(), bounds.y());
+                }
+
+                @Override
+                public List<TooltipComponent> getTooltip(int mouseX, int mouseY) {
+                    if (bounds.contains(mouseX, mouseY)) {
+                        return tooltip;
+                    }
+                    return List.of();
+                }
+            });
+
+            if (component.type().equals("slot") || component.type().equals("large_slot")) {
+                int index = component.index();
+                boolean large = component.type().equals("large_slot");
+                if (index <= -1) {
+                    widgets.addSlot(EmiStack.of(recipe.parent().itemStack()), x, y).large(large).drawBack(false);
+                } else if (!component.output() && index > 0 && index <= inputs.size()) {
+                    widgets.addSlot(inputs.get(--index), x, y).large(large).drawBack(false);
+                } else if (component.output() && index > 0 && index <= outputs.size()) {
+                    widgets.addSlot(outputs.get(--index), x, y).recipeContext(this).large(large).drawBack(false);
+                }
+            }
         }
     }
 }

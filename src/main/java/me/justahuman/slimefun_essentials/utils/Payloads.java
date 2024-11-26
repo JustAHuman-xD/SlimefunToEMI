@@ -5,17 +5,18 @@ import com.google.common.io.ByteStreams;
 import me.justahuman.slimefun_essentials.SlimefunEssentials;
 import me.justahuman.slimefun_essentials.client.RecipeCategory;
 import me.justahuman.slimefun_essentials.client.payloads.ComponentTypePayload;
-import me.justahuman.slimefun_essentials.client.payloads.ItemGroupsPayload;
 import me.justahuman.slimefun_essentials.client.payloads.ItemsPayload;
 import me.justahuman.slimefun_essentials.client.payloads.LoadingStatePayload;
-import me.justahuman.slimefun_essentials.client.payloads.RecipeCategoryPayload;
+import me.justahuman.slimefun_essentials.client.payloads.RecipeCategoriesPayload;
 import me.justahuman.slimefun_essentials.client.payloads.RecipeDisplayPayload;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.util.Identifier;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -23,16 +24,20 @@ public class Payloads {
     public static final String PLUGIN_ID = "slimefun_server_essentials";
     public static final CustomPayload.Id<ComponentTypePayload> COMPONENT_TYPE_CHANNEL = newChannel("component_types");
     public static final CustomPayload.Id<ItemsPayload> ITEM_CHANNEL = newChannel("items");
-    public static final CustomPayload.Id<ItemGroupsPayload> ITEM_GROUPS_CHANNEL = newChannel("item_groups");
     public static final CustomPayload.Id<RecipeDisplayPayload> RECIPE_DISPLAY_CHANNEL = newChannel("recipe_displays");
-    public static final CustomPayload.Id<RecipeCategoryPayload> RECIPE_CATEGORY_CHANNEL = newChannel("recipe_categories");
+    public static final CustomPayload.Id<RecipeCategoriesPayload> RECIPE_CATEGORIES_CHANNEL = newChannel("recipe_categories");
     public static final CustomPayload.Id<LoadingStatePayload> LOADING_STATE_CHANNEL = newChannel("loading_state");
 
     private static final int MAX_MESSAGE_SIZE = 32766;
     private static final int SPLIT_MESSAGE_SIZE = MAX_MESSAGE_SIZE - 4 - 4 - 4;
     private static final Map<Class<?>, Integer> PACKET_COUNTS = new HashMap<>();
     private static final Map<Class<?>, Integer> EXPECTED_PACKETS = new HashMap<>();
+    private static final List<Runnable> ON_MEET_EXPECTED = new ArrayList<>();
     private static boolean metExpected = false;
+
+    public static void onMeetExpected(Runnable runnable) {
+        ON_MEET_EXPECTED.add(runnable);
+    }
 
     public static boolean metExpected() {
         return metExpected;
@@ -41,6 +46,7 @@ public class Payloads {
     public static void reset() {
         PACKET_COUNTS.clear();
         EXPECTED_PACKETS.clear();
+        ON_MEET_EXPECTED.clear();
         metExpected = false;
     }
 
@@ -48,7 +54,7 @@ public class Payloads {
         EXPECTED_PACKETS.clear();
         EXPECTED_PACKETS.put(ComponentTypePayload.class, payload.typePackets());
         EXPECTED_PACKETS.put(ItemsPayload.class, payload.itemPackets());
-        EXPECTED_PACKETS.put(RecipeCategoryPayload.class, payload.categoryPackets());
+        EXPECTED_PACKETS.put(RecipeCategoriesPayload.class, payload.categoryPackets());
         EXPECTED_PACKETS.put(RecipeDisplayPayload.class, payload.displayPackets());
         checkMetExpected();
     }
@@ -64,8 +70,14 @@ public class Payloads {
 
         metExpected = !EXPECTED_PACKETS.isEmpty();
         if (metExpected) {
-            SlimefunEssentials.LOGGER.info("Received every expected packet!!");
+            SlimefunEssentials.LOGGER.info("Received every expected packet: {}, {}, {}, {}",
+                    EXPECTED_PACKETS.get(ComponentTypePayload.class),
+                    EXPECTED_PACKETS.get(ItemsPayload.class),
+                    EXPECTED_PACKETS.get(RecipeCategoriesPayload.class),
+                    EXPECTED_PACKETS.get(RecipeDisplayPayload.class));
             RecipeCategory.finalizeCategories();
+            ON_MEET_EXPECTED.forEach(Runnable::run);
+            ON_MEET_EXPECTED.clear();
         }
     }
 

@@ -20,13 +20,6 @@ public class ConfigScreen {
 
         /* General Config Options */
 
-        generalCategory.addEntry(entryBuilder.startBooleanToggle(Text.translatable("slimefun_essentials.config.option.block_features"), ModConfig.blockFeatures())
-                .setDefaultValue(true)
-                .setTooltip(Text.translatable("slimefun_essentials.config.option.block_features.tooltip"))
-                .setRequirement(CompatUtils::isBlockFeatureModLoaded)
-                .setSaveConsumer(ModConfig::setBlockFeatures)
-                .build());
-
         generalCategory.addEntry(entryBuilder.startBooleanToggle(Text.translatable("slimefun_essentials.config.option.recipe_features"), ModConfig.recipeFeatures())
                 .setDefaultValue(true)
                 .setTooltip(Text.translatable("slimefun_essentials.config.option.recipe_features.tooltip"))

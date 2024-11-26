@@ -33,7 +33,7 @@ public class BasicComponentType implements DisplayComponentType {
     }
 
     @Override
-    public void draw(SlimefunRecipe recipe, DrawMode mode, DrawContext context, int x, int y, int mouseX, int mouseY, List<TooltipComponent> tooltip) {
-        draw(recipe, mode == DrawMode.LIGHT ? light : dark, context, x, y, mouseX, mouseY, tooltip);
+    public void draw(SlimefunRecipe recipe, DrawMode mode, DrawContext context, int x, int y) {
+        draw(recipe, mode == DrawMode.LIGHT ? light : dark, context, x, y);
     }
 }

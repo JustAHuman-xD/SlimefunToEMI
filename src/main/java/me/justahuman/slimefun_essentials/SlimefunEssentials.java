@@ -3,16 +3,14 @@ package me.justahuman.slimefun_essentials;
 import me.justahuman.slimefun_essentials.api.DisplayComponentType;
 import me.justahuman.slimefun_essentials.client.RecipeCategory;
 import me.justahuman.slimefun_essentials.client.RecipeDisplay;
-import me.justahuman.slimefun_essentials.client.RecipeDisplayComponent;
-import me.justahuman.slimefun_essentials.client.SlimefunItemGroup;
 import me.justahuman.slimefun_essentials.client.SlimefunRegistry;
 import me.justahuman.slimefun_essentials.client.payloads.ComponentTypePayload;
-import me.justahuman.slimefun_essentials.client.payloads.ItemGroupsPayload;
 import me.justahuman.slimefun_essentials.client.payloads.ItemsPayload;
 import me.justahuman.slimefun_essentials.client.payloads.LoadingStatePayload;
-import me.justahuman.slimefun_essentials.client.payloads.RecipeCategoryPayload;
+import me.justahuman.slimefun_essentials.client.payloads.RecipeCategoriesPayload;
 import me.justahuman.slimefun_essentials.client.payloads.RecipeDisplayPayload;
 import me.justahuman.slimefun_essentials.compat.cloth_config.ConfigScreen;
+import me.justahuman.slimefun_essentials.compat.rei.ReiIntegration;
 import me.justahuman.slimefun_essentials.config.ModConfig;
 import me.justahuman.slimefun_essentials.utils.Payloads;
 import me.justahuman.slimefun_essentials.utils.CompatUtils;
@@ -36,8 +34,7 @@ public class SlimefunEssentials implements ClientModInitializer {
         PayloadTypeRegistry.playS2C().register(Payloads.LOADING_STATE_CHANNEL, LoadingStatePayload.CODEC);
         PayloadTypeRegistry.playS2C().register(Payloads.ITEM_CHANNEL, ItemsPayload.CODEC);
         PayloadTypeRegistry.playS2C().register(Payloads.COMPONENT_TYPE_CHANNEL, ComponentTypePayload.CODEC);
-        PayloadTypeRegistry.playS2C().register(Payloads.ITEM_GROUPS_CHANNEL, ItemGroupsPayload.CODEC);
-        PayloadTypeRegistry.playS2C().register(Payloads.RECIPE_CATEGORY_CHANNEL, RecipeCategoryPayload.CODEC);
+        PayloadTypeRegistry.playS2C().register(Payloads.RECIPE_CATEGORIES_CHANNEL, RecipeCategoriesPayload.CODEC);
         PayloadTypeRegistry.playS2C().register(Payloads.RECIPE_DISPLAY_CHANNEL, RecipeDisplayPayload.CODEC);
         ModConfig.loadConfig();
 
@@ -50,17 +47,18 @@ public class SlimefunEssentials implements ClientModInitializer {
             }
         });
         ClientPlayNetworking.registerGlobalReceiver(Payloads.COMPONENT_TYPE_CHANNEL, (payload, context) -> {});
-        ClientPlayNetworking.registerGlobalReceiver(Payloads.ITEM_GROUPS_CHANNEL, (payload, context) -> {});
-        ClientPlayNetworking.registerGlobalReceiver(Payloads.RECIPE_CATEGORY_CHANNEL, (payload, context) -> {});
+        ClientPlayNetworking.registerGlobalReceiver(Payloads.RECIPE_CATEGORIES_CHANNEL, (payload, context) -> {});
         ClientPlayNetworking.registerGlobalReceiver(Payloads.RECIPE_DISPLAY_CHANNEL, (payload, context) -> {});
 
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
             RecipeCategory.clear();
             DisplayComponentType.clear();
-            SlimefunItemGroup.clear();
             RecipeDisplay.clear();
             SlimefunRegistry.reset();
             Payloads.reset();
+            if (CompatUtils.isReiLoaded()) {
+                ReiIntegration.reset();
+            }
         });
 
         if (CompatUtils.isClothConfigLoaded()) {
